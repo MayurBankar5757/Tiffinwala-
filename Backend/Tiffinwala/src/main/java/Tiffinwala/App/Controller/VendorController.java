@@ -4,7 +4,7 @@ import Tiffinwala.App.Entities.Address;
 import Tiffinwala.App.Entities.Role;
 import Tiffinwala.App.Entities.User;
 import Tiffinwala.App.Entities.Vendor;
-import Tiffinwala.App.Repository.RoleRepository;
+import Tiffinwala.App.Entities.VendorSubscriptionPlan;
 import Tiffinwala.App.Repository.UserRepository;
 import Tiffinwala.App.Repository.VendorRepository;
 import Tiffinwala.App.Services.RoleServices;
@@ -61,35 +61,72 @@ public class VendorController {
 
     @PostMapping("/RegUser")
     public ResponseEntity<?> saveUser(@RequestBody RegDummy r) {
-        // Create User object
+       
         User user = new User();
         user.setFname(r.getFname());
         user.setLname(r.getLname());
         user.setEmail(r.getEmail());
         user.setPassword(r.getPassword());
         user.setContact(r.getContact());
-        Address a = new Address();
+        // address set
+        Address a = new Address(r.getCity(), r.getState(),r.getPincode(), r.getArea());
+        
+        // getting role
       Role role = rserv.getRoleById(r.getRid());
         user.setRole(role);
+        
+        user.setAddress(a);
 
-        // Check if it's a Vendor
+     
         if (r.getRid() == 2) { // Vendor Role
             Vendor vendor = new Vendor();
-            vendor.setIsVerified(r.getIsVerified());
+            vendor.setIsVerified(false);
             vendor.setFoodLicenceNo(r.getFoodLicenceNo());
             vendor.setAdhar_no(r.getAdhar_no());
-            vendor.setUser(user); // Set the User object in Vendor
-            userRepository.save(user); // Save the User object
-            vendorRepository.save(vendor); // Save the Vendor object
-        } else if (r.getRid() == 3) { // Customer Role
-            userRepository.save(user); // Save only the User object
+            vendor.setUser(user); 
+            userRepository.save(user);
+            vendorRepository.save(vendor); 
+        } else if (r.getRid() == 3) { 
+            userRepository.save(user); 
         } else {
             return ResponseEntity.badRequest().body("Invalid role ID.");
         }
 
         return ResponseEntity.ok("User saved successfully.");
     }
+    
+    
+    // Add subscrition plan
+    
+    @PostMapping("/addPlan")
+    public VendorSubscriptionPlan AddPlan() {
+    	
+    	
+    	return null;
+    }
+    
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // get User by User Id
 //@GetMapping("/vendor/{uid}")

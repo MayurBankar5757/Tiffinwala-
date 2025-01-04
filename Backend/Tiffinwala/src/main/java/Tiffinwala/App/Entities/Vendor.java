@@ -13,12 +13,14 @@ public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+  //  @Column(name="Vendor_id")
     private Integer vendorId;
 
-    @Column(nullable = false)
+   // @Column(name = "Is_verified" ,nullable = false)
     private Boolean isVerified;
-    
+   
     private String foodLicenceNo;
+  
     private String adhar_no;
 //
 //    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

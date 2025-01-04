@@ -33,7 +33,7 @@ public class VendorService {
 
     // Get vendor by User ID (Uid)
     public Optional<Vendor> getVendorByUserId(Integer uid) {
-        return vendorRepository.findByUser_Uid(uid);  // Find by foreign key relationship
+        return vendorRepository.findById(uid);  // Find by foreign key relationship
     }
 
     // Get all vendors
