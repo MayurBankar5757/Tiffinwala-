@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendor-subscription-plans")
+@CrossOrigin(origins = "http://localhost:3000")
 public class VendorSubscriptionPlanController {
 
     private final VendorSubscriptionPlanService vendorSubscriptionPlanService;
@@ -52,7 +53,7 @@ public class VendorSubscriptionPlanController {
     }
 
     // Get all subscription plans
-    @GetMapping
+    @GetMapping("/getAllSubcriptionPlan")
     public ResponseEntity<List<VendorSubscriptionPlan>> getAllSubscriptionPlans() {
         List<VendorSubscriptionPlan> allPlans = vendorSubscriptionPlanService.getAllSubscriptionPlans();
         return new ResponseEntity<>(allPlans, HttpStatus.OK);

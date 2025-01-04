@@ -4,31 +4,32 @@ import jakarta.persistence.*;
 import lombok.Data;
 @Data
 @Entity
-@Table(name = "Vendor_Subscription_Plan")
+@Table(name = "vendor_subscription_plan")
 public class VendorSubscriptionPlan {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer planId;
+	 @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    @Column(name = "Plan_id")
+	    private Integer planId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Vendor_id", nullable = false)
-    private Vendor vendor;  // Assuming Vendor entity exists
+	    @ManyToOne(fetch = FetchType.EAGER)
+	    @JoinColumn(name = "Vendor_id", nullable = false)
+	    private Vendor vendor;  // Assuming Vendor entity exists
 
-    @Column(name = "Name", nullable = false)
-    private String name;
+	    @Column(name = "Name", nullable = false)
+	    private String name;
 
-    @Column(name = "Price", nullable = false)
-    private Integer price;
+	    @Column(name = "Price", nullable = false)
+	    private Integer price;
 
-    @Column(name = "Description", nullable = false)
-    private String description;
+	    @Column(name = "Description", nullable = false)
+	    private String description;
 
-    @Column(name = "Image")
-    private String image;
+	    @Column(name = "Image")
+	    private String image;
 
-    @Column(name = "is_available", nullable = false)
-    private Boolean isAvailable;
+	    @Column(name = "is_available", nullable = false)
+	    private Boolean isAvailable;
 
     // Constructors
     public VendorSubscriptionPlan() {}
