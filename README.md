@@ -48,7 +48,7 @@ The online tiffin service **Tiffinwala** is designed to provide a comprehensive 
 - Resolve disputes between vendors and customers.  
 - Process vendor payments based on sales performance.  
 
----
+-------------------------------------------------
 
 ## **Non-functional Requirements**  
 
