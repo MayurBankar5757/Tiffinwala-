@@ -47,12 +47,14 @@ public class TiffinService {
     }
 
     // Update a tiffin
-    public Tiffin updateTiffin(Integer tiffinId, String day, Integer price, String foodType, String description, String image) {
-        Tiffin tiffin = getTiffinById(tiffinId);
-        tiffin.setDay(day);
+    public Tiffin updateTiffin(TiffinDummy dummy) {
+        Tiffin tiffin = getTiffinById(dummy.getV_sub_Id());
         
-        tiffin.setFoodType(foodType);
-        tiffin.setDescription(description);
+        tiffin.setDay(dummy.getDay());
+        
+        tiffin.setFoodType(dummy.getFoodType());
+        tiffin.setDescription(dummy.getDescription());
+        tiffin.setName(dummy.getName());
         
         return tiffinRepository.save(tiffin);
     }

@@ -21,7 +21,7 @@ public class TiffinController {
 
     // Create a new tiffin
     @PostMapping
-    public ResponseEntity<Tiffin> addTiffin(TiffinDummy dummy) {
+    public ResponseEntity<Tiffin> addTiffin( @RequestBody TiffinDummy dummy) {
 
         Tiffin tiffin = tiffinService.addTiffin(dummy);    
         
@@ -43,16 +43,11 @@ public class TiffinController {
     }
 
     // Update a tiffin
+    
     @PutMapping("/{tiffinId}")
-    public ResponseEntity<Tiffin> updateTiffin(
-            @PathVariable Integer tiffinId,
-            @RequestParam String day,
-            @RequestParam Integer price,
-            @RequestParam String foodType,
-            @RequestParam String description,
-            @RequestParam String image) {
+    public ResponseEntity<Tiffin> updateTiffin( @RequestBody TiffinDummy dummy) {
 
-        Tiffin tiffin = tiffinService.updateTiffin(tiffinId, day, price, foodType, description, image);
+        Tiffin tiffin = tiffinService.updateTiffin(dummy);
         return new ResponseEntity<>(tiffin, HttpStatus.OK);
     }
 
