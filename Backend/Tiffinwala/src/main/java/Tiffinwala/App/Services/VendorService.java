@@ -36,6 +36,20 @@ public class VendorService {
         return vendorRepository.findById(uid);  // Find by foreign key relationship
     }
 
+    // Get vendor by vid
+    public Vendor getVendorById(Integer vid) {
+       Vendor v =    vendorRepository.findById(vid).get();
+       
+       if(v != null) {
+    	   return v;
+       }
+       else {
+    	   System.out.println("Vendor cannot found");
+    	   return null;
+       }
+       
+    }
+    
     // Get all vendors
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();

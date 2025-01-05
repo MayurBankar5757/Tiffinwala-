@@ -59,6 +59,20 @@ export default function VendorHome() {
             Home
           </Link>
         </div>
+ {/* Left: create subcription plan */}
+ <div>
+          <Link
+            to="/createPlan"
+            style={{
+              color: "#fff",
+              textDecoration: "none",
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            Create Subscription Plan
+          </Link>
+        </div>
 
         {/* Spacer for Center Alignment */}
         <div style={{ flex: 1 }}></div>

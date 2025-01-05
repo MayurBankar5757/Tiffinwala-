@@ -1,10 +1,15 @@
 package Tiffinwala.App.Services;
 
 import Tiffinwala.App.Entities.VendorSubscriptionPlan;
+import Tiffinwala.App.Dummy.Vendor_Sub_Plan_Dummy;
 import Tiffinwala.App.Entities.Vendor;
 import Tiffinwala.App.Repository.VendorSubscriptionPlanRepository;
 import Tiffinwala.App.Repository.VendorRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +18,8 @@ public class VendorSubscriptionPlanService {
 
     private final VendorSubscriptionPlanRepository vendorSubscriptionPlanRepository;
     private final VendorRepository vendorRepository;
+    @Autowired
+    private VendorService vservice;
 
     public VendorSubscriptionPlanService(VendorSubscriptionPlanRepository vendorSubscriptionPlanRepository, VendorRepository vendorRepository) {
         this.vendorSubscriptionPlanRepository = vendorSubscriptionPlanRepository;
@@ -20,11 +27,24 @@ public class VendorSubscriptionPlanService {
     }
 
     // Save a new subscription plan
-    public VendorSubscriptionPlan saveSubscriptionPlan(Integer vendorId, String name, Integer price, String description, String image, Boolean isAvailable) {
-        Vendor vendor = vendorRepository.findById(vendorId).orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
-        VendorSubscriptionPlan subscriptionPlan = new VendorSubscriptionPlan(vendor, name, price, description, image, isAvailable);
-        return vendorSubscriptionPlanRepository.save(subscriptionPlan);
+    public ResponseEntity<VendorSubscriptionPlan> saveSubscriptionPlan(Vendor_Sub_Plan_Dummy dummy) {
+        System.out.println("Received isAvaliable: " + dummy.isAvaliable()); // Debug input
+        Vendor vendor = vservice.getVendorById(dummy.getVid());
+        VendorSubscriptionPlan plan = new VendorSubscriptionPlan();
+
+        plan.setDescription(dummy.getDescription());
+        plan.setIsAvailable(dummy.isAvaliable()); // Debug mapping
+        System.out.println("Mapped isAvailable: " + plan.getIsAvailable()); // Debug entity field
+        plan.setName(dummy.getName());
+        plan.setPrice(dummy.getPrice());
+        plan.setVendor(vendor);
+
+        VendorSubscriptionPlan savedPlan = vendorSubscriptionPlanRepository.save(plan);
+        System.out.println("Saved isAvailable: " + savedPlan.getIsAvailable()); // Debug saved value
+        return ResponseEntity.ok(savedPlan);
     }
+
+
 
     // Get subscription plan by ID
     public VendorSubscriptionPlan getSubscriptionPlanById(Integer planId) {
@@ -40,6 +60,21 @@ public class VendorSubscriptionPlanService {
     public List<VendorSubscriptionPlan> getAllSubscriptionPlans() {
         return vendorSubscriptionPlanRepository.findAll();
     }
+    
+    // upload photo
+    
+    @Transactional
+    public boolean uploadPhoto(int id, byte[] file) {
+        if (file == null || file.length == 0) {
+            System.out.println("File is null or empty.");
+            return false;
+        }
+
+        int updatedRows = vendorSubscriptionPlanRepository.uploadPhoto(id, file);
+        System.out.println("Updated rows: " + updatedRows + " for Plan ID: " + id);
+        return updatedRows > 0;
+    }
+
 
     // Delete a subscription plan
     public void deleteSubscriptionPlanById(Integer planId) {

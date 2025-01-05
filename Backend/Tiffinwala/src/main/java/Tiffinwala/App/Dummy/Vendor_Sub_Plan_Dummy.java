@@ -1,18 +1,16 @@
 package Tiffinwala.App.Dummy;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
 public class Vendor_Sub_Plan_Dummy {
-	private Long id;
+    private Integer vid;
+    private String name;
+    private String description;
+    private Integer price;
 
-	private String name;
-
-	private String description;
-
-	private double price;
-
-	//private PlanType planType;
-	
-	private boolean isAvaliable;
+    @JsonProperty("isAvaliable") // Maps the JSON key "isAvaliable" to this field
+    private boolean isAvaliable;
 }

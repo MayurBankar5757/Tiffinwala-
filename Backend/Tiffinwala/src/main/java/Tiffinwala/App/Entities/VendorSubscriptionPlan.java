@@ -7,6 +7,7 @@ import lombok.Data;
 @Table(name = "vendor_subscription_plan")
 public class VendorSubscriptionPlan {
 
+	//	Plan_id, Vendor_id, Name, Price, Description, Image, is_available
 	 @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    @Column(name = "Plan_id")
@@ -26,22 +27,25 @@ public class VendorSubscriptionPlan {
 	    private String description;
 
 	    @Column(name = "Image")
-	    private String image;
+	    private byte [] image;
 
 	    @Column(name = "is_available", nullable = false)
 	    private Boolean isAvailable;
 
-    // Constructors
-    public VendorSubscriptionPlan() {}
+		public VendorSubscriptionPlan(Vendor vendor, String name, Integer price, String description,
+				Boolean isAvailable) {
+			super();
+			this.vendor = vendor;
+			this.name = name;
+			this.price = price;
+			this.description = description;
+			this.isAvailable = isAvailable;
+		}
 
-    public VendorSubscriptionPlan(Vendor vendor, String name, Integer price, String description, String image, Boolean isAvailable) {
-        this.vendor = vendor;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.image = image;
-        this.isAvailable = isAvailable;
-    }
+		public VendorSubscriptionPlan() {
+			// TODO Auto-generated constructor stub
+		}
 
+   
    
 }

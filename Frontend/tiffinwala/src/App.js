@@ -9,6 +9,7 @@ import LogoutComp from './Components/LogoutComponent';
 import VendorHome from './Components/VendorHome';
 import UserVendorForm from './Components/UserReg';
 import CustomerHome from './Components/CutomerHome';
+import CreateSubscriptionPlan from './Components/CreateSubscriptionPlan';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
@@ -61,6 +62,7 @@ function App() {
           <Route exact path="/logout" element={<LogoutComp />} />
           <Route exact path="/Register" element={<UserVendorForm />} />
           <Route exact path="/customer_home" element={<CustomerHome />} />
+          <Route exact path="/CreatePlan" element={<CreateSubscriptionPlan />} />
         </Routes>
       </div>
 
