@@ -1,5 +1,6 @@
 package Tiffinwala.App.Services;
 
+import Tiffinwala.App.Dummy.TiffinDummy;
 import Tiffinwala.App.Entities.Tiffin;
 import Tiffinwala.App.Entities.VendorSubscriptionPlan;
 import Tiffinwala.App.Repository.TiffinRepository;
@@ -20,10 +21,18 @@ public class TiffinService {
     }
 
     // Add a new tiffin
-    public Tiffin addTiffin(Integer planId, String day, Integer price, String foodType, String description, String image) {
-        VendorSubscriptionPlan subscriptionPlan = vendorSubscriptionPlanRepository.findById(planId)
+    
+    public Tiffin addTiffin(TiffinDummy dummy) {
+    	
+        VendorSubscriptionPlan subscriptionPlan = vendorSubscriptionPlanRepository.findById(dummy.getV_sub_Id())
                 .orElseThrow(() -> new IllegalArgumentException("Vendor Subscription Plan not found"));
-        Tiffin tiffin = new Tiffin(subscriptionPlan, day, price, foodType, description, image);
+        Tiffin tiffin = new Tiffin();
+        tiffin.setDay(dummy.getDay());
+        tiffin.setDescription(dummy.getDescription());
+        tiffin.setFoodType(dummy.getFoodType());
+        tiffin.setName(dummy.getName());
+        tiffin.setVendorSubscriptionPlan(subscriptionPlan);
+        
         return tiffinRepository.save(tiffin);
     }
 
@@ -41,10 +50,10 @@ public class TiffinService {
     public Tiffin updateTiffin(Integer tiffinId, String day, Integer price, String foodType, String description, String image) {
         Tiffin tiffin = getTiffinById(tiffinId);
         tiffin.setDay(day);
-        tiffin.setPrice(price);
+        
         tiffin.setFoodType(foodType);
         tiffin.setDescription(description);
-        tiffin.setImage(image);
+        
         return tiffinRepository.save(tiffin);
     }
 

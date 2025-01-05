@@ -1,5 +1,6 @@
 package Tiffinwala.App.Controller;
 
+import Tiffinwala.App.Dummy.TiffinDummy;
 import Tiffinwala.App.Entities.Tiffin;
 import Tiffinwala.App.Services.TiffinService;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,11 @@ public class TiffinController {
 
     // Create a new tiffin
     @PostMapping
-    public ResponseEntity<Tiffin> addTiffin(
-            @RequestParam Integer planId,
-            @RequestParam String day,
-            @RequestParam Integer price,
-            @RequestParam String foodType,
-            @RequestParam String description,
-            @RequestParam String image) {
+    public ResponseEntity<Tiffin> addTiffin(TiffinDummy dummy) {
 
-        Tiffin tiffin = tiffinService.addTiffin(planId, day, price, foodType, description, image);
-        return new ResponseEntity<>(tiffin, HttpStatus.CREATED);
+        Tiffin tiffin = tiffinService.addTiffin(dummy);    
+        
+        return new ResponseEntity<>(tiffin,HttpStatus.OK);
     }
 
     // Get all tiffins by subscription plan ID

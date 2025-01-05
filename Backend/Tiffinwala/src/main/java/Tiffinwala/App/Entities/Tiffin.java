@@ -9,6 +9,7 @@ public class Tiffin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name ="Tiffin_id")
     private Integer tiffinId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -17,29 +18,28 @@ public class Tiffin {
 
     @Column(nullable = false)
     private String day;
+    
+    @Column(name ="Tiffin_name")
+    private String name;
 
-    @Column(nullable = false)
-    private Integer price;
-
-    @Column(name = "Food_type", nullable = false)
+    @Column(name = "food_type", nullable = false)
     private String foodType;
 
     @Column(nullable = false)
     private String description;
 
-    @Column
-    private String image;
-
+    //Tiffin_id, V_Subscription_id, Tiffin_name, day, description, food_type
+  
     // Constructors
     public Tiffin() {}
 
-    public Tiffin(VendorSubscriptionPlan vendorSubscriptionPlan, String day, Integer price, String foodType, String description, String image) {
+    public Tiffin(VendorSubscriptionPlan vendorSubscriptionPlan, String day, String foodType, String description ) {
         this.vendorSubscriptionPlan = vendorSubscriptionPlan;
         this.day = day;
-        this.price = price;
+        
         this.foodType = foodType;
         this.description = description;
-        this.image = image;
+       
     }
 
    
