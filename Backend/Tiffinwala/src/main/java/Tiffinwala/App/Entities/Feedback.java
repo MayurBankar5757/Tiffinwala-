@@ -31,8 +31,9 @@ public class Feedback {
     @Column(nullable = false)
     private Integer rating;
 
-    @Column(name = "Feedback_Date", nullable = false)
-    private LocalDate feedbackDate;
+    @Column(name = "feedback_date", nullable = false)
+    private LocalDate feedbackDate = LocalDate.now(); // Set a default date
+
 
     // Constructors
     public Feedback() {}

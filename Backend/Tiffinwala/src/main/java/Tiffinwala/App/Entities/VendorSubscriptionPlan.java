@@ -26,8 +26,10 @@ public class VendorSubscriptionPlan {
 	    @Column(name = "Description", nullable = false)
 	    private String description;
 
-	    @Column(name = "Image")
-	    private byte [] image;
+	    @Lob
+	    @Column(name = "image", columnDefinition = "LONGBLOB")
+	    private byte[] image;
+
 
 	    @Column(name = "is_available", nullable = false)
 	    private Boolean isAvailable;

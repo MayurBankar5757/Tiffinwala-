@@ -22,11 +22,14 @@ public class CustomerSubscribedPlans {
     @JoinColumn(name = "V_Subscription_id", nullable = false)
     private VendorSubscriptionPlan vendorSubscriptionPlan;  // Assuming VendorSubscriptionPlan entity exists
 
-    @Column(name = "Start_Date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "End_Date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "ordered_date")
+    private LocalDate orderedDate;
 
     // Constructors
     public CustomerSubscribedPlans() {}

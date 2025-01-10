@@ -20,7 +20,7 @@ public class CustomerOrderLog {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "Date_Time", nullable = false)
+    @Column(name = "Order_date", nullable = false)
     private LocalDateTime dateTime;
 
     // Constructors
