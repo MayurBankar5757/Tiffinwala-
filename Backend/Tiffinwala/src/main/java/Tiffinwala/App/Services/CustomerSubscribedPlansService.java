@@ -28,20 +28,23 @@ public class CustomerSubscribedPlansService {
         this.vendorSubscriptionPlanRepository = vendorSubscriptionPlanRepository;
     }
 
-    // Save a new customer subscription plan
-    public CustomerSubscribedPlans saveSubscriptionPlan(Integer uid, Integer planId, LocalDate startDate, LocalDate endDate) {
-        Optional<User> user = userRepository.findById(uid);
+    public CustomerSubscribedPlans saveSubscriptionPlan(int userId, int subscriptionId, LocalDate startDate, LocalDate endDate, LocalDate orderedDate) {
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new IllegalArgumentException("User with UID " + uid + " not found");
+            throw new IllegalArgumentException("User with UID " + userId + " not found");
         }
 
-        Optional<VendorSubscriptionPlan> vendorSubscriptionPlan = vendorSubscriptionPlanRepository.findById(planId);
+        Optional<VendorSubscriptionPlan> vendorSubscriptionPlan = vendorSubscriptionPlanRepository.findById(subscriptionId);
         if (vendorSubscriptionPlan.isEmpty()) {
-            throw new IllegalArgumentException("Vendor Subscription Plan with ID " + planId + " not found");
+            throw new IllegalArgumentException("Vendor Subscription Plan with ID " + subscriptionId + " not found");
         }
 
         CustomerSubscribedPlans customerSubscribedPlans = new CustomerSubscribedPlans(
-                user.get(), vendorSubscriptionPlan.get(), startDate, endDate
+                user.get(),
+                endDate,
+                startDate,                        
+                orderedDate,
+                vendorSubscriptionPlan.get()
         );
         return customerSubscribedPlansRepository.save(customerSubscribedPlans);
     }

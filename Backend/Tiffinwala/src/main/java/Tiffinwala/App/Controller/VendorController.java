@@ -96,15 +96,8 @@ public class VendorController {
     }
     
     
-    // Add subscrition plan
     
-    @PostMapping("/addPlan")
-    public VendorSubscriptionPlan AddPlan() {
-    	
-    	
-    	return null;
-    }
-    
+   
     
 }
 

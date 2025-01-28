@@ -1,5 +1,6 @@
 package Tiffinwala.App.Controller;
 
+import Tiffinwala.App.Dummy.CustomerPlanDummy;
 import Tiffinwala.App.Entities.CustomerSubscribedPlans;
 import Tiffinwala.App.Services.CustomerSubscribedPlansService;
 import org.springframework.http.HttpStatus;
@@ -21,25 +22,17 @@ public class CustomerSubscribedPlansController {
 
     // Create a new subscription
     @PostMapping
-    public ResponseEntity<CustomerSubscribedPlans> createSubscription(
-            @RequestParam Integer uid,
-            @RequestParam Integer planId,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-        
+    public ResponseEntity<CustomerSubscribedPlans> createSubscription(@RequestBody CustomerPlanDummy planRequest) {
         CustomerSubscribedPlans savedSubscription = customerSubscribedPlansService.saveSubscriptionPlan(
-                uid, planId, LocalDate.parse(startDate), LocalDate.parse(endDate)
+                planRequest.getUserId(),
+                planRequest.getSubscriptionId(),
+                planRequest.getStartDate(),
+                planRequest.getEndDate(),
+                planRequest.getOrderedDate()
         );
         return new ResponseEntity<>(savedSubscription, HttpStatus.CREATED);
     }
 
-    // Get subscription by user ID
-    @GetMapping("/user/{uid}")
-    public ResponseEntity<CustomerSubscribedPlans> getSubscriptionByUserId(@PathVariable Integer uid) {
-        return customerSubscribedPlansService.getSubscriptionPlanByUserId(uid)
-                .map(subscription -> new ResponseEntity<>(subscription, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 
     // Get all subscriptions by vendor plan ID
     @GetMapping("/vendor/{planId}")
