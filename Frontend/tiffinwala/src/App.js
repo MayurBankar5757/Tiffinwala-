@@ -63,6 +63,7 @@ function App() {
           <Route exact path="/Register" element={<UserVendorForm />} />
           <Route exact path="/customer_home" element={<CustomerHome />} />
           <Route exact path="/CreatePlan" element={<CreateSubscriptionPlan />} />
+         
         </Routes>
       </div>
 

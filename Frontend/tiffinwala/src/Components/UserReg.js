@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { navigate, useNavigate } from "react-router-dom";
 
 function UserVendorForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ function UserVendorForm() {
     foodLicenceNo: "",
     adhar_no: "",
   });
+
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({
     fname: "",
@@ -123,6 +126,8 @@ function UserVendorForm() {
         .then((response) => {
           if (response.ok) {
             alert("Data submitted successfully!");
+            navigate("/Login");
+
           } else {
             alert("Error submitting data.");
           }
@@ -133,7 +138,7 @@ function UserVendorForm() {
         });
     }
   };
-
+console.log(formData)
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
@@ -279,7 +284,7 @@ function UserVendorForm() {
                     onChange={handleRoleChange}
                   >
                     <option value="">Select Role</option>
-                    <option value="1">Customer</option>
+                    <option value="3">Customer</option>
                     <option value="2">Vendor</option>
                   </select>
                   {errors.rid && <small className="text-danger">{errors.rid}</small>}
@@ -345,7 +350,10 @@ function UserVendorForm() {
           </div>
         </div>
       </div>
+     
     </div>
+
+    
   );
 }
 

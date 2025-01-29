@@ -61,40 +61,40 @@ public class VendorController {
 
     @PostMapping("/RegUser")
     public ResponseEntity<?> saveUser(@RequestBody RegDummy r) {
-       
-        User user = new User();
-        user.setFname(r.getFname());
-        user.setLname(r.getLname());
-        user.setEmail(r.getEmail());
-        user.setPassword(r.getPassword());
-        user.setContact(r.getContact());
-        // address set
-        Address a = new Address(r.getCity(), r.getState(),r.getPincode(), r.getArea());
-        
-        // getting role
-      Role role = rserv.getRoleById(r.getRid());
-        user.setRole(role);
-        
-        user.setAddress(a);
+        try {
+            User user = new User();
+            user.setFname(r.getFname());
+            user.setLname(r.getLname());
+            user.setEmail(r.getEmail());
+            user.setPassword(r.getPassword());
+            user.setContact(r.getContact());
 
-     
-        if (r.getRid() == 2) { // Vendor Role
-            Vendor vendor = new Vendor();
-            vendor.setIsVerified(false);
-            vendor.setFoodLicenceNo(r.getFoodLicenceNo());
-            vendor.setAdhar_no(r.getAdhar_no());
-            vendor.setUser(user); 
+            Address address = new Address(r.getCity(), r.getState(), r.getPincode(), r.getArea());
+            user.setAddress(address);
+
+            Role role = rserv.getRoleById(r.getRid());
+            if (role == null) {
+                return ResponseEntity.badRequest().body("Invalid role ID.");
+            }
+            user.setRole(role);
+
             userRepository.save(user);
-            vendorRepository.save(vendor); 
-        } else if (r.getRid() == 3) { 
-            userRepository.save(user); 
-        } else {
-            return ResponseEntity.badRequest().body("Invalid role ID.");
-        }
 
-        return ResponseEntity.ok("User saved successfully.");
+            if (r.getRid() == 2) { // Vendor
+                Vendor vendor = new Vendor();
+                vendor.setIsVerified(false);
+                vendor.setFoodLicenceNo(r.getFoodLicenceNo());
+                vendor.setAdhar_no(r.getAdhar_no());
+                vendor.setUser(user);
+                vendorRepository.save(vendor);
+            }
+
+            return ResponseEntity.ok("User registered successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving user: " + e.getMessage());
+        }
     }
-    
     
     
    
