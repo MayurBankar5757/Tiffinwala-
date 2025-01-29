@@ -3,6 +3,8 @@ package Tiffinwala.App.Controller;
 import Tiffinwala.App.Dummy.CustomerPlanDummy;
 import Tiffinwala.App.Entities.CustomerSubscribedPlans;
 import Tiffinwala.App.Services.CustomerSubscribedPlansService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/subscriptions")
 public class CustomerSubscribedPlansController {
 
+	@Autowired
     private final CustomerSubscribedPlansService customerSubscribedPlansService;
 
     public CustomerSubscribedPlansController(CustomerSubscribedPlansService customerSubscribedPlansService) {
@@ -53,5 +56,13 @@ public class CustomerSubscribedPlansController {
     public ResponseEntity<Void> deleteSubscription(@PathVariable Integer id) {
         customerSubscribedPlansService.deleteSubscriptionPlanById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    
+    // get all subcription plan for specific vendor 
+    
+    @GetMapping("/user/{uid}")
+    public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionPlansByUserId(@PathVariable Integer uid) {
+        List<CustomerSubscribedPlans> plans = customerSubscribedPlansService.getSubscriptionPlansByUserId(uid);
+        return new ResponseEntity<>(plans, HttpStatus.OK);
     }
 }

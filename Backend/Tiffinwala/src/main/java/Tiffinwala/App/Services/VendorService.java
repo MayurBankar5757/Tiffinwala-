@@ -67,4 +67,15 @@ public class VendorService {
     public void deleteVendorById(Integer vendorId) {
         vendorRepository.deleteById(vendorId);  // Delete the vendor by its ID
     }
+    
+    // get all approved vendor
+    
+    public List<Vendor> getAllApprovedVendors() {
+        return vendorRepository.findByIsVerifiedTrue();
+    }
+    
+    // get all unapproved vendor
+    public List<Vendor> getAllUnapprovedVendors() {
+        return vendorRepository.findByIsVerifiedFalse();
+    }
 }

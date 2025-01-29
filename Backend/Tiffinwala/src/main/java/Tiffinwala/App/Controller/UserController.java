@@ -25,47 +25,7 @@ public class UserController {
     
     @Autowired
     private RoleServices roleserv;
-
-    // Create a new user
-    @PostMapping("/signUp")
-    public ResponseEntity<User> createUser(@RequestBody UserDummy user) {
-        // Get the role by roleid
-        Role role = roleserv.getRoleById(user.getRoleid());
-        
-        // Initialize the Address object
-        Address add = new Address(); 
-        add.setArea(user.getArea());
-        add.setCity(user.getCity());
-        add.setPincode(user.getPincode());
-        add.setState(user.getState());
-        
-        // Initialize the User object
-        User realUser = new User();  
-        
-        // Ensure role and address are not null
-        if (role != null && add != null) {
-            // Set role and address
-            realUser.setRole(role);
-            realUser.setAddress(add);
-            
-            // Set other user details
-            realUser.setFname(user.getFname());
-            realUser.setLname(user.getLname());
-            realUser.setPassword(user.getPassword()); 
-            realUser.setContact(user.getContact());
-            realUser.setEmail(user.getEmail());
-            
-            // Save the user to the database
-            User savedUser = userService.createUser(realUser); 
-            
-            return new ResponseEntity<>(savedUser, HttpStatus.CREATED); 
-        } else {
-            // Handle the error if role or address is not found
-            System.out.println("Role or address not found");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
-    }
-    
+ 
     // Login
     @PostMapping("/chkLogin")
     public User getLogin(@RequestBody LoginCheck login){
@@ -80,10 +40,11 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserById(uid), HttpStatus.OK);
     }
 
-    // Get all users
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    // Get all Customers  for admin
+    @GetMapping("/getAllCustomers")  
+    public ResponseEntity<List<User>> getAllCustomers() {
+        List<User> users = userService.getAllCustomers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     // Update a user

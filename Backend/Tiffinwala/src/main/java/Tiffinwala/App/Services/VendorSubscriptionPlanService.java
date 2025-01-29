@@ -80,4 +80,33 @@ public class VendorSubscriptionPlanService {
     public void deleteSubscriptionPlanById(Integer planId) {
         vendorSubscriptionPlanRepository.deleteById(planId);
     }
+    
+    
+    // Enabled subcription plan 
+    public VendorSubscriptionPlan enableSubscriptionPlan(Integer planId) {
+        VendorSubscriptionPlan plan = vendorSubscriptionPlanRepository.findByPlanId(planId);
+
+        plan.setIsAvailable(true); // Enable the subscription plan
+        return vendorSubscriptionPlanRepository.save(plan); // Save the updated plan
+    }
+    
+    
+    // disabled subcription plan
+    
+    public VendorSubscriptionPlan disableSubscriptionPlan(Integer planId) {
+        VendorSubscriptionPlan plan = vendorSubscriptionPlanRepository.findByPlanId(planId);
+              
+        plan.setIsAvailable(false); // Disable the subscription plan
+        return vendorSubscriptionPlanRepository.save(plan); // Save the updated plan
+    }
+    
+    // display enabled subcription plan
+    
+    public List<VendorSubscriptionPlan> getEnabledSubscriptionPlans() {
+        return vendorSubscriptionPlanRepository.findByIsAvailableTrue(); // Fetch all enabled plans
+    }
+    
+    public List<VendorSubscriptionPlan> getDisabledSubscriptionPlans() {
+        return vendorSubscriptionPlanRepository.findByIsAvailableFalse(); // Fetch all disabled plans
+    }
 }

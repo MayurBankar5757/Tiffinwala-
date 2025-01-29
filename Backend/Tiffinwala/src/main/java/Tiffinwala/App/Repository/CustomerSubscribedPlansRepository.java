@@ -13,4 +13,7 @@ public interface CustomerSubscribedPlansRepository extends JpaRepository<Custome
     List<CustomerSubscribedPlans> findByVendorSubscriptionPlanPlanId(Integer planId);
     
     public CustomerSubscribedPlans getById(Integer id);
+    
+    List<CustomerSubscribedPlans> findByUser_Uid(Integer uid); // Fetch all plans for a specific user
+
 }

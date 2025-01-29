@@ -27,6 +27,7 @@ public class VendorController {
 	    @Autowired
 	    private VendorRepository vendorRepository;
 
+	    @Autowired
     private  VendorService vendorService;
     @Autowired
     private RoleServices rserv;
@@ -42,7 +43,7 @@ public class VendorController {
 
    
 
-    // Change Vendor Verification Status
+    // Change Vendor Verification Status for admin
     @PutMapping("/{id}/verify")
     public ResponseEntity<Vendor> updateVerificationStatus(
             @PathVariable Integer id, @RequestParam Boolean isVerified) {
@@ -50,10 +51,12 @@ public class VendorController {
         return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
     }
     
+    
+    
    
     
     
-    @GetMapping("/vendor/{uid}")
+    @GetMapping("/vendor/{uid}") 
     public Vendor getVendorByUserUid(@PathVariable Integer uid) {
         return vendorRepository.findVendorByUserUid(uid);
     }
@@ -95,6 +98,25 @@ public class VendorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving user: " + e.getMessage());
         }
     }
+    
+    // get all approved vendor for admin
+    
+    @GetMapping("/getAllApprovedVendor")
+    public ResponseEntity<List<Vendor>> getAllApprovedVendors() {
+        List<Vendor> vendors = vendorService.getAllApprovedVendors();
+        return new ResponseEntity<>(vendors, HttpStatus.OK);
+    }
+    
+
+    // get all upapproved vendor for admin
+    @GetMapping("/getBlockedVendors")
+    public ResponseEntity<List<Vendor>> getAllUnapprovedVendors() {
+        List<Vendor> vendors = vendorService.getAllUnapprovedVendors();
+        return new ResponseEntity<>(vendors, HttpStatus.OK);
+    }
+    
+    
+
     
     
    

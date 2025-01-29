@@ -43,6 +43,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    // Get all Customers
+    public List<User> getAllCustomers() {
+    	Integer rid = 3;
+    	Role r = roleRepository.findById(rid).get();
+		
+        return userRepository.getAllCustomers(r);
+    }
+    
+    
     public User getUserById(Integer uid) {
         return userRepository.findById(uid).orElse(null);  // Returns null if the user is not found
     }

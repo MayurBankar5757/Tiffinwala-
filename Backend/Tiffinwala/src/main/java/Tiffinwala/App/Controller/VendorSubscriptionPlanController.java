@@ -89,4 +89,38 @@ public class VendorSubscriptionPlanController {
         vendorSubscriptionPlanService.deleteSubscriptionPlanById(planId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    
+    
+    // Enable subcription plan
+    
+    @PutMapping("/{planId}/enable")
+    public ResponseEntity<VendorSubscriptionPlan> enableSubscriptionPlan(@PathVariable Integer planId) {
+        VendorSubscriptionPlan updatedPlan = vendorSubscriptionPlanService.enableSubscriptionPlan(planId);
+        return new ResponseEntity<>(updatedPlan, HttpStatus.OK);
+    }
+    
+    
+    // disabled subcription plan
+    
+    @PutMapping("/{planId}/disable")
+    public ResponseEntity<VendorSubscriptionPlan> disableSubscriptionPlan(@PathVariable Integer planId) {
+        VendorSubscriptionPlan updatedPlan = vendorSubscriptionPlanService.disableSubscriptionPlan(planId);
+        return new ResponseEntity<>(updatedPlan, HttpStatus.OK);
+    }
+    
+    // display enabled subcription plan
+    
+    @GetMapping("/enabled")
+    public ResponseEntity<List<VendorSubscriptionPlan>> getEnabledSubscriptionPlans() {
+        List<VendorSubscriptionPlan> enabledPlans = vendorSubscriptionPlanService.getEnabledSubscriptionPlans();
+        return new ResponseEntity<>(enabledPlans, HttpStatus.OK);
+    }
+    
+    
+    // display all disabled plans
+    @GetMapping("/disabled")
+    public ResponseEntity<List<VendorSubscriptionPlan>> getDisabledSubscriptionPlans() {
+        List<VendorSubscriptionPlan> disabledPlans = vendorSubscriptionPlanService.getDisabledSubscriptionPlans();
+        return new ResponseEntity<>(disabledPlans, HttpStatus.OK);
+    }
 }

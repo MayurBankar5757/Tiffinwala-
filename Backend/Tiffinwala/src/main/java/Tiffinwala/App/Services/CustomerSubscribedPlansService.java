@@ -68,4 +68,9 @@ public class CustomerSubscribedPlansService {
     public void deleteSubscriptionPlanById(Integer id) {
         customerSubscribedPlansRepository.deleteById(id);
     }
+    
+    // get subscription plan by id all plans
+    public List<CustomerSubscribedPlans> getSubscriptionPlansByUserId(Integer uid) {
+        return customerSubscribedPlansRepository.findByUser_Uid(uid);
+    }
 }
