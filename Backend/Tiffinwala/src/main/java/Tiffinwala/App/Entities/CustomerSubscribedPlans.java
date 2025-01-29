@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Optional;
+
 @Data
 @Entity
 @Table(name = "Customer_Subscribed_Plans")
@@ -34,17 +34,11 @@ public class CustomerSubscribedPlans {
     // Constructors
     public CustomerSubscribedPlans() {}
 
-	public CustomerSubscribedPlans(User user2, LocalDate endDate2, LocalDate startDate2, LocalDate orderedDate2,
-			VendorSubscriptionPlan vendorSubscriptionPlan2) {
-		// TODO Auto-generated constructor stub
-		user = user2;
-		endDate = endDate2;
-		startDate = startDate2;
-		orderedDate = orderedDate2;
-		vendorSubscriptionPlan = vendorSubscriptionPlan2;
-		
-	}
-
-   
-   
+    public CustomerSubscribedPlans(User user, VendorSubscriptionPlan vendorSubscriptionPlan, LocalDate startDate, LocalDate endDate, LocalDate orderedDate) {
+        this.user = user;
+        this.vendorSubscriptionPlan = vendorSubscriptionPlan;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.orderedDate = orderedDate;
+    }
 }

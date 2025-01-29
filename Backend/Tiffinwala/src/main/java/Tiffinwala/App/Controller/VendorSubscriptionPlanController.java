@@ -1,5 +1,6 @@
 package Tiffinwala.App.Controller;
 
+import Tiffinwala.App.Dummy.VendorSubscriptionPlanDTO;
 import Tiffinwala.App.Dummy.Vendor_Sub_Plan_Dummy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,11 +30,11 @@ public class VendorSubscriptionPlanController {
  
 
     // Create a new subscription plan
-	@PostMapping
-	public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(@RequestBody Vendor_Sub_Plan_Dummy dummy) {
-	    System.out.println("Received JSON: " + dummy);
-	    return vendorSubscriptionPlanService.saveSubscriptionPlan(dummy);
-	}
+	  @PostMapping("/create")
+	    public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(@RequestBody VendorSubscriptionPlanDTO dto) {
+	        VendorSubscriptionPlan newPlan = vendorSubscriptionPlanService.createSubscriptionPlan(dto);
+	        return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
+	    }
 
     @PostMapping(value = "/uploadImage/{vid}", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImage(@PathVariable("vid") int vid, @RequestParam("file") MultipartFile file) {

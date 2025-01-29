@@ -24,17 +24,15 @@ public class CustomerSubscribedPlansController {
     }
 
     // Create a new subscription
-    @PostMapping
-    public ResponseEntity<CustomerSubscribedPlans> createSubscription(@RequestBody CustomerPlanDummy planRequest) {
-        CustomerSubscribedPlans savedSubscription = customerSubscribedPlansService.saveSubscriptionPlan(
-                planRequest.getUserId(),
-                planRequest.getSubscriptionId(),
-                planRequest.getStartDate(),
-                planRequest.getEndDate(),
-                planRequest.getOrderedDate()
-        );
-        return new ResponseEntity<>(savedSubscription, HttpStatus.CREATED);
-    }
+    public ResponseEntity<CustomerSubscribedPlans> createSubscription(@RequestParam Integer userId,
+            @RequestParam Integer subscriptionPlanId,
+            @RequestParam LocalDate orderedDate) {
+    		// Call service method to create a subscription plan
+    		CustomerSubscribedPlans createdPlan = customerSubscribedPlansService.createSubscriptionPlan(userId, subscriptionPlanId, orderedDate);
+
+    		// Return the created plan in the response
+    		return new ResponseEntity<>(createdPlan, HttpStatus.CREATED);
+    	}
 
 
     // Get all subscriptions by vendor plan ID

@@ -1,6 +1,7 @@
 package Tiffinwala.App.Services;
 
 import Tiffinwala.App.Entities.VendorSubscriptionPlan;
+import Tiffinwala.App.Dummy.VendorSubscriptionPlanDTO;
 import Tiffinwala.App.Dummy.Vendor_Sub_Plan_Dummy;
 import Tiffinwala.App.Entities.Vendor;
 import Tiffinwala.App.Repository.VendorSubscriptionPlanRepository;
@@ -25,23 +26,20 @@ public class VendorSubscriptionPlanService {
         this.vendorSubscriptionPlanRepository = vendorSubscriptionPlanRepository;
         this.vendorRepository = vendorRepository;
     }
+    public VendorSubscriptionPlan createSubscriptionPlan(VendorSubscriptionPlanDTO dto) {
+        Vendor vendor = vendorRepository.findById(dto.getVendorId())
+                .orElseThrow(() -> new RuntimeException("Vendor not found with ID: " + dto.getVendorId()));
 
-    // Save a new subscription plan
-    public ResponseEntity<VendorSubscriptionPlan> saveSubscriptionPlan(Vendor_Sub_Plan_Dummy dummy) {
-        System.out.println("Received isAvaliable: " + dummy.isAvaliable()); // Debug input
-        Vendor vendor = vservice.getVendorById(dummy.getVid());
-        VendorSubscriptionPlan plan = new VendorSubscriptionPlan();
+        VendorSubscriptionPlan subscriptionPlan = new VendorSubscriptionPlan();
+        subscriptionPlan.setVendor(vendor);
+        subscriptionPlan.setName(dto.getName());
+        subscriptionPlan.setPrice(dto.getPrice());
+        subscriptionPlan.setDescription(dto.getDescription());
+        subscriptionPlan.setIsAvailable(dto.isAvaliable());  // ✅ Works for "isAvailable" field
 
-        plan.setDescription(dummy.getDescription());
-        plan.setIsAvailable(dummy.isAvaliable()); // Debug mapping
-        System.out.println("Mapped isAvailable: " + plan.getIsAvailable()); // Debug entity field
-        plan.setName(dummy.getName());
-        plan.setPrice(dummy.getPrice());
-        plan.setVendor(vendor);
+        subscriptionPlan.setDuration(dto.getDuration());  // ✅ Set ENUM value
 
-        VendorSubscriptionPlan savedPlan = vendorSubscriptionPlanRepository.save(plan);
-        System.out.println("Saved isAvailable: " + savedPlan.getIsAvailable()); // Debug saved value
-        return ResponseEntity.ok(savedPlan);
+        return vendorSubscriptionPlanRepository.save(subscriptionPlan);
     }
 
 

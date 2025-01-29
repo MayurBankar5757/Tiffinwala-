@@ -1,5 +1,6 @@
 package Tiffinwala.App.Entities;
 
+import Tiffinwala.App.Enum.SubscriptionDuration;
 import jakarta.persistence.*;
 import lombok.Data;
 @Data
@@ -33,21 +34,22 @@ public class VendorSubscriptionPlan {
 
 	    @Column(name = "is_available", nullable = false)
 	    private Boolean isAvailable;
+	    
+	    @Enumerated(EnumType.STRING)  // ✅ Store ENUM as String in DB
+	    @Column(name = "duration", nullable = false)
+	    private SubscriptionDuration duration;  // ✅ Using Enum
 
-		public VendorSubscriptionPlan(Vendor vendor, String name, Integer price, String description,
-				Boolean isAvailable) {
-			super();
-			this.vendor = vendor;
-			this.name = name;
-			this.price = price;
-			this.description = description;
-			this.isAvailable = isAvailable;
-		}
+	    public VendorSubscriptionPlan(Vendor vendor, String name, Integer price, String description,
+                Boolean isAvailable, SubscriptionDuration duration) {
+	    		this.vendor = vendor;
+	    		this.name = name;
+	    		this.price = price;
+	    		this.description = description;
+	    		this.isAvailable = isAvailable;
+	    		this.duration = duration;
+	    	}
 
-		public VendorSubscriptionPlan() {
-			// TODO Auto-generated constructor stub
-		}
-
+	    public VendorSubscriptionPlan() {}
    
    
-}
+		}
