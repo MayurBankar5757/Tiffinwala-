@@ -12,14 +12,16 @@ public class CustomerSubscribedPlans {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Customer_plan_id")
     private Integer customerPlanId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Uid", nullable = false)
     private User user;  // Assuming the User entity exists and is used
-
+    
+ 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "V_Subscription_id", nullable = false)
+    @JoinColumn(name = "v_Subscription_id", nullable = false)
     private VendorSubscriptionPlan vendorSubscriptionPlan;  // Assuming VendorSubscriptionPlan entity exists
 
     @Column(name = "start_date")

@@ -2,17 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const loggedSlice = createSlice({
     name: "logged",
-    initialState: { // Fixed typo here
+    initialState: {
         loggedIn: false,
+        user: null,  // Store the user data here
     },
     reducers: {
-        login: (state) => {
+        login: (state, action) => {
             console.log("in loggIn action");
-            return { loggedIn: true };
+            state.loggedIn = true;
+            state.user = action.payload;  // Store the user data passed from the login response
         },
         logout: (state) => {
             console.log("in loggedOut action");
-            return { loggedIn: false };
+            state.loggedIn = false;
+            state.user = null;  // Clear the user data on logout
         },
     },
 });

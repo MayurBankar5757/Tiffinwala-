@@ -1,10 +1,16 @@
 package Tiffinwala.App.Entities;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.Data;
 @Data
 @Entity
 @Table(name = "Tiffin")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})  // ✅ Ignore Hibernate proxy fields
+@CrossOrigin(origins = "http://localhost:3000") 
 public class Tiffin {
 
     @Id

@@ -8,8 +8,7 @@ export default function AdminHome() {
 
                 <Link to="/admin_home" className="nav-link">Home</Link>
 
-
-                <Link to="/logout" className="nav-link">Logut</Link>
+                <Link to="/logout" className="nav-link">Logout</Link>
 
             </header>
             < h1>Admin Home comp</h1>

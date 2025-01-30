@@ -24,8 +24,6 @@ public interface VendorSubscriptionPlanRepository extends JpaRepository<VendorSu
     @Query("update VendorSubscriptionPlan set image = :file where planId = :id")
     int uploadPhoto(@Param("id") int id, @Param("file") byte[] file);
 
-
-    Optional<VendorSubscriptionPlan> findByPlanId1(Integer planId); // Find plan by its ID
     
     List<VendorSubscriptionPlan> findByIsAvailableTrue();
     

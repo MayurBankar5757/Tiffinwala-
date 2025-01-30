@@ -1,7 +1,9 @@
 package Tiffinwala.App.Controller;
 
+import Tiffinwala.App.Dummy.TiffinDTO;
 import Tiffinwala.App.Dummy.TiffinDummy;
 import Tiffinwala.App.Entities.Tiffin;
+import Tiffinwala.App.Entities.VendorSubscriptionPlan;
 import Tiffinwala.App.Services.TiffinService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tiffins")
+@CrossOrigin(origins = "http://localhost:3000") 
+
 public class TiffinController {
 
     private final TiffinService tiffinService;
@@ -30,11 +34,10 @@ public class TiffinController {
 
     // Get all tiffins by subscription plan ID
     @GetMapping("/plan/{planId}")
-    public ResponseEntity<List<Tiffin>> getTiffinsByPlanId(@PathVariable Integer planId) {
-        List<Tiffin> tiffins = tiffinService.getTiffinsByPlanId(planId);
-        return new ResponseEntity<>(tiffins, HttpStatus.OK);
+    public List<TiffinDTO> getTiffinsByPlanId(@PathVariable("planId") int planId) {
+        return tiffinService.getTiffinsByPlanId(planId);
     }
-
+    
     // Get a tiffin by ID
     @GetMapping("/{tiffinId}")
     public ResponseEntity<Tiffin> getTiffinById(@PathVariable Integer tiffinId) {

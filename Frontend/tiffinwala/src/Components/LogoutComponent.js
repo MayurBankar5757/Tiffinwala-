@@ -5,7 +5,10 @@ import { logout } from "./slice";
 export default function LogoutComp(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    
+    // Clear localStorage and dispatch logout action
     localStorage.clear();
     dispatch(logout());
-    navigate("/");
+    
+    navigate("/Login");
 }

@@ -49,7 +49,7 @@ export default function Home() {
                       {plan.isAvailable ? "Available" : "Not Available"}
                     </span>
                     <Link
-                      to={`/subscription-plan-details/${plan.id}`}
+                      to={`/VendorPlanDetails/${plan.planId}`}
                       className="btn btn-primary btn-sm"
                     >
                       Get Details

@@ -10,47 +10,18 @@ import VendorHome from './Components/VendorHome';
 import UserVendorForm from './Components/UserReg';
 import CustomerHome from './Components/CutomerHome';
 import CreateSubscriptionPlan from './Components/CreateSubscriptionPlan';
+import { useImperativeHandle } from 'react';
+import VendorPlanDetails from './Components/VedndorPlanDetails';
+import Navbar from './Components/Navbar';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
   console.log(mystate);
   return (
     <div className="App">
-      {/* Navigation Bar */}
-      {!mystate.loggedIn && (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-          <div className="container-fluid">
-            <a className="navbar-brand" href="/">
-              Tiffinwala
-            </a>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNav"
-              aria-controls="navbarNav"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav ms-auto">
-                <li className="nav-item">
-                  <Link to="/Login" className="nav-link">
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/Register" className="nav-link">
-                    Register
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      )}
+       {/* Navbar Component */}
+      <Navbar />
+
 
       {/* Routing Section */}
       <div className="container mt-4">
@@ -63,7 +34,9 @@ function App() {
           <Route exact path="/Register" element={<UserVendorForm />} />
           <Route exact path="/customer_home" element={<CustomerHome />} />
           <Route exact path="/CreatePlan" element={<CreateSubscriptionPlan />} />
-         
+          <Route path="/VendorPlanDetails/:id" element={<VendorPlanDetails />} />
+
+
         </Routes>
       </div>
 

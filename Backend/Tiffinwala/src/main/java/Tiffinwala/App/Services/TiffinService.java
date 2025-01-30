@@ -1,5 +1,6 @@
 package Tiffinwala.App.Services;
 
+import Tiffinwala.App.Dummy.TiffinDTO;
 import Tiffinwala.App.Dummy.TiffinDummy;
 import Tiffinwala.App.Entities.Tiffin;
 import Tiffinwala.App.Entities.VendorSubscriptionPlan;
@@ -8,6 +9,7 @@ import Tiffinwala.App.Repository.VendorSubscriptionPlanRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TiffinService {
@@ -37,9 +39,11 @@ public class TiffinService {
     }
 
     // Get all tiffins by subscription plan ID
-    public List<Tiffin> getTiffinsByPlanId(Integer planId) {
-        return tiffinRepository.findByVendorSubscriptionPlanPlanId(planId);
+    public List<TiffinDTO> getTiffinsByPlanId(Integer planId) {
+        List<Tiffin> tiffins = tiffinRepository.findByVendorSubscriptionPlan_PlanId(planId);
+        return tiffins.stream().map(TiffinDTO::new).collect(Collectors.toList());
     }
+    
 
     // Get a tiffin by ID
     public Tiffin getTiffinById(Integer tiffinId) {

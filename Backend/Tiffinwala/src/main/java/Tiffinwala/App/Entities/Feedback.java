@@ -31,8 +31,6 @@ public class Feedback {
     @Column(nullable = false)
     private Integer rating;
 
-    @Column(name = "feedback_date", nullable = false)
-    private LocalDate feedbackDate = LocalDate.now(); // Set a default date
 
 
     // Constructors
@@ -44,7 +42,6 @@ public class Feedback {
         this.vendorSubscriptionPlan = vendorSubscriptionPlan;
         this.feedbackText = feedbackText;
         this.rating = rating;
-        this.feedbackDate = feedbackDate;
     }
 
     

@@ -47,7 +47,7 @@ export default function Home() {
                 if (Object.keys(obj).length === 0) {
                     setMsg("Wrong user ID or Password");
                 } else {
-                    reducerAction(login());
+                    reducerAction(login(obj));
                     localStorage.setItem("loggedUser", JSON.stringify(obj));
                     if (obj.role.roleId === 1) {
                         navigate("/admin_home");
