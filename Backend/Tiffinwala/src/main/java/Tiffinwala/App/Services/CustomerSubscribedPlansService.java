@@ -15,41 +15,41 @@ import java.util.Optional;
 @Service
 public class CustomerSubscribedPlansService {
 
-    @Autowired
-    private CustomerSubscribedPlansRepository customerSubscribedPlansRepository;
+	 private final CustomerSubscribedPlansRepository customerSubscribedPlansRepository;
+	    private final UserRepository userRepository;
+	    private final VendorSubscriptionPlanRepository vendorSubscriptionPlanRepository;
 
-    @Autowired
-    private VendorSubscriptionPlanRepository vendorSubscriptionPlanRepository;
+	    @Autowired
+	    public CustomerSubscribedPlansService(CustomerSubscribedPlansRepository customerSubscribedPlansRepository,
+	                                          UserRepository userRepository,
+	                                          VendorSubscriptionPlanRepository vendorSubscriptionPlanRepository) {
+	        this.customerSubscribedPlansRepository = customerSubscribedPlansRepository;
+	        this.userRepository = userRepository;
+	        this.vendorSubscriptionPlanRepository = vendorSubscriptionPlanRepository;
+	    }
 
-    @Autowired
-    private UserRepository userRepository;
+	    public CustomerSubscribedPlans createSubscriptionPlan(Integer userId, Integer subscriptionPlanId, LocalDate orderedDate, Integer duration) {
+	        // Fetch the user based on userId
+	        User user = userRepository.findById(userId)
+	                .orElseThrow(() -> new RuntimeException("User with UID " + userId + " not found"));
 
-    // Create a subscription plan for a user
-    public CustomerSubscribedPlans createSubscriptionPlan(Integer userId, Integer subscriptionPlanId, LocalDate orderedDate) {
-        // Fetch the user and subscription plan based on the provided IDs
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with UID " + userId + " not found"));
+	        // Fetch the subscription plan based on subscriptionPlanId
+	        VendorSubscriptionPlan vendorSubscriptionPlan = vendorSubscriptionPlanRepository.findById(subscriptionPlanId)
+	                .orElseThrow(() -> new RuntimeException("Subscription plan with ID " + subscriptionPlanId + " not found"));
 
-        VendorSubscriptionPlan vendorSubscriptionPlan = vendorSubscriptionPlanRepository.findById(subscriptionPlanId)
-                .orElseThrow(() -> new RuntimeException("Subscription plan with ID " + subscriptionPlanId + " not found"));
+	        // Use the passed duration directly
+	        int durationInDays = duration;
 
-        // Get the duration (in days) from the VendorSubscriptionPlan (it's an enum)
-        int durationInDays = vendorSubscriptionPlan.getDuration().getDays(); // Use getDays() to get the integer value
+	        // Calculate the startDate and endDate
+	        LocalDate startDate = orderedDate;
+	        LocalDate endDate = startDate.plusDays(durationInDays);
 
-        // Calculate the startDate and endDate
-        LocalDate startDate = orderedDate;
-        LocalDate endDate = startDate.plusDays(durationInDays);
-
-        // Create the new CustomerSubscribedPlans object
-        CustomerSubscribedPlans customerSubscribedPlan = new CustomerSubscribedPlans(user, vendorSubscriptionPlan, startDate, endDate, orderedDate);
-
-        // Save and return the newly created subscription plan
-        return customerSubscribedPlansRepository.save(customerSubscribedPlan);
-    }
-    // Get Customer Subscription Plans by User UID
-    public Optional<CustomerSubscribedPlans> getSubscriptionPlanByUserId(Integer uid) {
-        return customerSubscribedPlansRepository.findByUserUid(uid);
-    }
+	        // Create the new subscription plan
+	        CustomerSubscribedPlans customerSubscribedPlan = new CustomerSubscribedPlans(user, vendorSubscriptionPlan, startDate, endDate, orderedDate);
+	        
+	        // Save the new subscription plan
+	        return customerSubscribedPlansRepository.save(customerSubscribedPlan);
+	    }
 
     // Get Customer Subscription Plans by Vendor Subscription Plan ID
     public List<CustomerSubscribedPlans> getSubscriptionPlansByVendorId(Integer planId) {
