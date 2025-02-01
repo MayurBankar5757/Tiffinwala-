@@ -14,6 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/subscriptions")
+@CrossOrigin(origins = "http://localhost:3010") 
+
 public class CustomerSubscribedPlansController {
 
 	@Autowired

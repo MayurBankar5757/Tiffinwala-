@@ -13,8 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tiffins")
-@CrossOrigin(origins = "http://localhost:3000") 
-
+@CrossOrigin(origins = "http://localhost:3010") 
 public class TiffinController {
 
     private final TiffinService tiffinService;

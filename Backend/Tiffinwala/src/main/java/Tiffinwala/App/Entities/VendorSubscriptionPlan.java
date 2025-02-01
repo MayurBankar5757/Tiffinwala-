@@ -1,9 +1,12 @@
 package Tiffinwala.App.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import Tiffinwala.App.Enum.SubscriptionDuration;
 import jakarta.persistence.*;
 import lombok.Data;
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "vendor_subscription_plan")
 public class VendorSubscriptionPlan {

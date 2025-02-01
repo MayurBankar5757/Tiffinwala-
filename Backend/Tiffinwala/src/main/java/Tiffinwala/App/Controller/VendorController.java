@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendors")
-@CrossOrigin(origins ="http://localhost:3000")
+@CrossOrigin(origins ="http://localhost:3010")
 public class VendorController {
 	 @Autowired
 	    private UserRepository userRepository;
@@ -51,10 +51,7 @@ public class VendorController {
         return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
     }
     
-    
-    
    
-    
     
     @GetMapping("/vendor/{uid}") 
     public Vendor getVendorByUserUid(@PathVariable Integer uid) {
