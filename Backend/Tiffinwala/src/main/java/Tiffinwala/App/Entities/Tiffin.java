@@ -10,7 +10,6 @@ import lombok.Data;
 @Entity
 @Table(name = "Tiffin")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})  // ✅ Ignore Hibernate proxy fields
-@CrossOrigin(origins = "http://localhost:3000") 
 public class Tiffin {
 
     @Id

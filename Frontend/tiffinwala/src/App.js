@@ -13,6 +13,8 @@ import CreateSubscriptionPlan from './Components/CreateSubscriptionPlan';
 import { useImperativeHandle } from 'react';
 import VendorPlanDetails from './Components/VedndorPlanDetails';
 import Navbar from './Components/Navbar';
+import VendorSubPlanList from './Components/VendorSubPlanList';
+import ShowSubscribedCustomers from './Components/ShowSubscribedCustomers';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
@@ -26,15 +28,23 @@ function App() {
       {/* Routing Section */}
       <div className="container mt-4">
         <Routes>
+
+          {/* User routes  */}
+
           <Route exact path="/" element={<Home />} />
           <Route exact path="/Login" element={<LoginFom />} />
           <Route exact path="/admin_home" element={<AdminHome />} />
           <Route exact path="/vendor_home" element={<VendorHome />} />
           <Route exact path="/logout" element={<LogoutComp />} />
           <Route exact path="/Register" element={<UserVendorForm />} />
+
+          {/*  Customer routes */}
           <Route exact path="/customer_home" element={<CustomerHome />} />
           <Route exact path="/CreatePlan" element={<CreateSubscriptionPlan />} />
           <Route path="/VendorPlanDetails/:id" element={<VendorPlanDetails />} />
+
+          <Route path="/vendorAllPlans" element={<VendorSubPlanList />} />
+          <Route path="/showSubscribedCustomers/:id" element={<ShowSubscribedCustomers />} />
 
 
         </Routes>

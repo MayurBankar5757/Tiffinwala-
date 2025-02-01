@@ -5,7 +5,10 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "Customer_Subscribed_Plans")
 public class CustomerSubscribedPlans {

@@ -5,6 +5,8 @@ import Tiffinwala.App.Entities.VendorSubscriptionPlan;
 import Tiffinwala.App.Repository.CustomerSubscribedPlansRepository;
 import Tiffinwala.App.Repository.UserRepository;
 import Tiffinwala.App.Repository.VendorSubscriptionPlanRepository;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,7 @@ public class CustomerSubscribedPlansService {
 	    }
 
     // Get Customer Subscription Plans by Vendor Subscription Plan ID
+    @Transactional 
     public List<CustomerSubscribedPlans> getSubscriptionPlansByVendorId(Integer planId) {
         return customerSubscribedPlansRepository.findByVendorSubscriptionPlanPlanId(planId);
     }

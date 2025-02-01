@@ -15,8 +15,6 @@ public class RegDummy {
 	    private String pincode;
 	    private String state;
 	    private Integer rid;
-
-	   
 	    private Boolean isVerified;
 	    private String foodLicenceNo;
 	    private String adhar_no;
