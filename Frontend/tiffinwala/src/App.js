@@ -15,6 +15,7 @@ import VendorPlanDetails from './Components/VedndorPlanDetails';
 import Navbar from './Components/Navbar';
 import VendorSubPlanList from './Components/VendorSubPlanList';
 import ShowSubscribedCustomers from './Components/ShowSubscribedCustomers';
+import AddSubscription from './Components/CreateSubscriptionPlan';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
@@ -40,7 +41,7 @@ function App() {
 
           {/*  Customer routes */}
           <Route exact path="/customer_home" element={<CustomerHome />} />
-          <Route exact path="/CreatePlan" element={<CreateSubscriptionPlan />} />
+          <Route exact path="/addSubcriptionPlan" element={<AddSubscription />} />
           <Route path="/VendorPlanDetails/:id" element={<VendorPlanDetails />} />
 
           <Route path="/vendorAllPlans" element={<VendorSubPlanList />} />
