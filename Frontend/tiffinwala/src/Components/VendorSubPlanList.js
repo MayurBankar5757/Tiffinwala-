@@ -28,7 +28,7 @@ export default function VendorSubPlanList() {
 
     const enablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/enable`, {
+            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/enabled`, {
                 method: "PUT",
             });
             if (!response.ok) {
@@ -42,7 +42,7 @@ export default function VendorSubPlanList() {
 
     const disablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/disable`, {
+            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/disabled`, {
                 method: "PUT",
             });
             if (!response.ok) {
