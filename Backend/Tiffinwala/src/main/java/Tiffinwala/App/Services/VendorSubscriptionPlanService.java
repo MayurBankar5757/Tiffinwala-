@@ -8,11 +8,14 @@ import Tiffinwala.App.Repository.VendorRepository;
 import Tiffinwala.App.Exceptions.ResourceNotFoundException;
 import Tiffinwala.App.Exceptions.ConflictException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +43,32 @@ public class VendorSubscriptionPlanService {
         subscriptionPlan.setIsAvailable(dto.isAvaliable());
         subscriptionPlan.setDuration(dto.getDuration());
 
+        // Handle image upload
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                subscriptionPlan.setImage(dto.getImage().getBytes());  // Convert MultipartFile to byte[]
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process the image file.", e);
+            }
+        }
+
         try {
             return vendorSubscriptionPlanRepository.save(subscriptionPlan);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Duplicate entry detected. Please ensure all fields are unique.");
+            Throwable rootCause = e.getRootCause();
+            if (rootCause instanceof ConstraintViolationException) {
+                ConstraintViolationException constraintException = (ConstraintViolationException) rootCause;
+                String constraintName = constraintException.getConstraintName();
+                if (constraintName.contains("unique_vendor_plan_name")) {
+                    throw new ConflictException("A subscription plan with the same name already exists for this vendor.");
+                } else if (constraintName.contains("unique_vendor_duration")) {
+                    throw new ConflictException("A subscription plan with the same duration already exists for this vendor.");
+                } else {
+                    throw new ConflictException("Duplicate entry detected. Please ensure all fields are unique.");
+                }
+            } else {
+                throw new ConflictException("Duplicate entry detected. Please ensure all fields are unique.");
+            }
         }
     }
 

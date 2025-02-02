@@ -7,7 +7,7 @@ export default function ShowSubscribedCustomers() {
 
     useEffect(() => {
         // Fetch data based on the 'id' (planid) from the URL
-        fetch(`http://localhost:8081/api/subscriptions/vendor/${id}`)
+        fetch(`http://localhost:8081/api/subscriptions/planid/${id}`)
             .then(response => response.json())
             .then(data => setSubscribedCustomers(data))
             .catch(error => console.error('Error fetching data:', error));
