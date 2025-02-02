@@ -2,9 +2,6 @@ package Tiffinwala.App.Controller;
 
 import Tiffinwala.App.Dummy.CustomerSubscriptionDTO;
 import Tiffinwala.App.Entities.CustomerSubscribedPlans;
-import Tiffinwala.App.Entities.VendorSubscriptionPlan;
-import Tiffinwala.App.Enum.SubscriptionDuration;
-import Tiffinwala.App.Repository.VendorSubscriptionPlanRepository;
 import Tiffinwala.App.Services.CustomerSubscribedPlansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

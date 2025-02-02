@@ -2,7 +2,7 @@ package Tiffinwala.App.Enum;
 
 public enum SubscriptionDuration {
     SEVEN_DAYS(7),
-    TWENTYEIGHT_DAYS(28);
+    THIRTY_DAYS(28);
 
     private final int days;
 

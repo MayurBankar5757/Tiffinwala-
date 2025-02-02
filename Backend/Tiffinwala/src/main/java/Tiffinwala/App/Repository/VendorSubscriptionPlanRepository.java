@@ -17,6 +17,7 @@ import java.util.Optional;
 @Transactional
 public interface VendorSubscriptionPlanRepository extends JpaRepository<VendorSubscriptionPlan, Integer> {
 
+	
     List<VendorSubscriptionPlan> findByVendorVendorId(Integer vendorId);
     
     VendorSubscriptionPlan findByPlanId(Integer planId);

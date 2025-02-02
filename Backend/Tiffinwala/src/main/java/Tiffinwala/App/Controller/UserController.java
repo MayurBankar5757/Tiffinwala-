@@ -2,131 +2,85 @@ package Tiffinwala.App.Controller;
 
 import Tiffinwala.App.Dummy.LoginCheck;
 import Tiffinwala.App.Dummy.UserDummy;
-import Tiffinwala.App.Entities.Address;
-import Tiffinwala.App.Entities.Role;
 import Tiffinwala.App.Entities.User;
-import Tiffinwala.App.Services.RoleServices;
+import Tiffinwala.App.Exceptions.ResourceNotFoundException;
 import Tiffinwala.App.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins ="http://localhost:3010")
+@CrossOrigin(origins = "http://localhost:3010")
 public class UserController {
 
     @Autowired
     private UserService userService;
     
-    @Autowired
-    private RoleServices roleserv;
- 
-    // Login
+    // Login endpoint
     @PostMapping("/chkLogin")
-    public User getLogin(@RequestBody LoginCheck login){
-    	
-    	System.out.println(userService.getLogin(login.getEmail(), login.getPwd()));
-    	return userService.getLogin(login.getEmail(), login.getPwd());
+    public ResponseEntity<?> login(@RequestBody LoginCheck login) {
+        try {
+            User user = userService.getLogin(login.getEmail(), login.getPwd());
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
+        }
     }
 
     // Get a user by ID
     @GetMapping("/{uid}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer uid) {
-        return new ResponseEntity<>(userService.getUserById(uid), HttpStatus.OK);
+    public ResponseEntity<?> getUserById(@PathVariable Integer uid) {
+        try {
+            User user = userService.getUserById(uid);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Get all Customers  for admin
-    @GetMapping("/getAllCustomers")  
-    public ResponseEntity<List<User>> getAllCustomers() {
-        List<User> users = userService.getAllCustomers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    // Get all customers for admin
+    @GetMapping("/getAllCustomers")
+    public ResponseEntity<?> getAllCustomers() {
+        try {
+            List<User> users = userService.getAllCustomers();
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to retrieve customers", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Update a user
     @PutMapping("/{uid}")
-    public ResponseEntity<User> updateUser(@PathVariable Integer uid, @RequestBody UserDummy user) {
-        // Fetch the existing user by UID
-        User existingUser = userService.getUserById(uid);  // Assuming getUserById() retrieves the user by UID
-        
-        // Check if user exists
-        if (existingUser == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  // If user doesn't exist, return 404 Not Found
+    public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody UserDummy userRequest) {
+        try {
+            User updatedUser = userService.updateUserDetails(uid, userRequest);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update user. Try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
-        // Fetch the role by roleid
-        Role role = roleserv.getRoleById(user.getRoleid());  // Get the role based on role ID
-        
-        // Update the address fields
-        Address add = existingUser.getAddress();  // Get the existing address object
-        if (add == null) {
-            add = new Address();  // If the address doesn't exist, create a new one
-        }
-        add.setArea(user.getArea());
-        add.setCity(user.getCity());
-        add.setPincode(user.getPincode());
-        add.setState(user.getState());
-        
-        // Update the existing user details
-        existingUser.setFname(user.getFname());
-        existingUser.setLname(user.getLname());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(user.getPassword());  // Make sure to hash the password before saving
-        existingUser.setContact(user.getContact());
-        
-        // Update the user's role and address
-        if (role != null) {
-            existingUser.setRole(role);
-        }
-        existingUser.setAddress(add);
-        
-        // Save the updated user to the database
-        User updatedUser = userService.updateUser(uid, existingUser);  // Assuming updateUser() handles updating the user in the DB
-        
-        // Return the updated user with status OK
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    // Delete a user--ok
-    @DeleteMapping("/{uid}") 
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer uid) {
-        userService.deleteUser(uid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    // Delete a user
+    @DeleteMapping("/{uid}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer uid) {
+        try {
+            userService.deleteUser(uid);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
-   
-       
-    }
-
-
-
-
-//@GetMapping("/role/{rid}")
-//public User findByRole(@PathVariable Integer rid) {
-//  return userService.getByRole(rid);
-//}
-
-
-// Get user by email--ok
-
-// Endpoint to find user by email
-//@PostMapping("/findByEmail")
-//public ResponseEntity<User> findByEmail(@RequestBody Map<String, String> requestBody) {
-//    String email = requestBody.get("email");
-//    
-//    if (email == null || email.isEmpty()) {
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
-//
-//    try {
-//        User user = userService.getByEmail(email);
-//        System.out.println(user);
-//        return new ResponseEntity<>(user, HttpStatus.OK);
-//    } catch (RuntimeException e) {
-//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
-//}
+}

@@ -1,12 +1,18 @@
 package Tiffinwala.App.Services;
 
+import Tiffinwala.App.Dummy.RegDummy;
+import Tiffinwala.App.Entities.Address;
+import Tiffinwala.App.Entities.Role;
 import Tiffinwala.App.Entities.User;
 import Tiffinwala.App.Entities.Vendor;
 import Tiffinwala.App.Exceptions.ResourceNotFoundException;
-import Tiffinwala.App.Repository.VendorRepository;
+import Tiffinwala.App.Exceptions.ConflictException;
 import Tiffinwala.App.Repository.UserRepository;
+import Tiffinwala.App.Repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,67 +21,78 @@ import java.util.Optional;
 public class VendorService {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private VendorRepository vendorRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private RoleServices roleServices;
 
-    // Save a new vendor
-    public Vendor saveVendor(Integer uid, Boolean isVerified) {
-        User user = userRepository.findById(uid)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + uid));  // Fetch the user using uid
-        
-        Vendor vendor = new Vendor();
-        vendor.setUser(user);  // Set the user object
-        vendor.setIsVerified(isVerified ? true : false);  // Set verification status (0 or 1)
-        return vendorRepository.save(vendor);  // Save the vendor to the repository
-    }
-
-    // Get vendor by User ID (Uid)
-    public Optional<Vendor> getVendorByUserId(Integer uid) {
-        return vendorRepository.findById(uid);  // Find by foreign key relationship
-    }
-
-    // Get vendor by vid
-    public Vendor getVendorById(Integer vid) {
-       Vendor v =    vendorRepository.findById(vid).get();
-       
-       if(v != null) {
-    	   return v;
-       }
-       else {
-    	   System.out.println("Vendor cannot found");
-    	   return null;
-       }
-       
-    }
-    
     // Get all vendors
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();
     }
 
-    // Change verification status of vendor
+    // Update vendor verification status
     public Vendor updateVerificationStatus(Integer vendorId, Boolean isVerified) {
         Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with ID: " + vendorId));  // Proper exception handling
-        vendor.setIsVerified(isVerified ? true : false);  // Set the verification status (0 or 1)
-        return vendorRepository.save(vendor);  // Save and return the updated vendor
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with ID: " + vendorId));
+        vendor.setIsVerified(isVerified);
+        return vendorRepository.save(vendor);
     }
 
-    // Delete vendor by ID
-    public void deleteVendorById(Integer vendorId) {
-        vendorRepository.deleteById(vendorId);  // Delete the vendor by its ID
+    // Save a new user and associated vendor if applicable
+    @Transactional
+    public void saveUser(RegDummy r) {
+        try {
+            User user = new User();
+            user.setFname(r.getFname());
+            user.setLname(r.getLname());
+            user.setEmail(r.getEmail());
+            user.setPassword(r.getPassword());
+            user.setContact(r.getContact());
+
+            Address address = new Address(r.getCity(), r.getState(), r.getPincode(), r.getArea());
+            user.setAddress(address);
+
+            Role role = roleServices.getRoleById(r.getRid());
+            if (role == null) {
+                throw new ResourceNotFoundException("Invalid role ID.");
+            }
+            user.setRole(role);
+
+            userRepository.save(user);
+
+            if (r.getRid() == 2) { // Vendor
+                Vendor vendor = new Vendor();
+                vendor.setIsVerified(false);
+                vendor.setFoodLicenceNo(r.getFoodLicenceNo());
+                vendor.setAdhar_no(r.getAdhar_no());
+                vendor.setUser(user);
+                vendorRepository.save(vendor);
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Data integrity violation: Duplicate entry for email or contact.");
+        }
     }
-    
-    // get all approved vendor
-    
+
+    // Get all approved vendors
     public List<Vendor> getAllApprovedVendors() {
         return vendorRepository.findByIsVerifiedTrue();
     }
-    
-    // get all unapproved vendor
+
+    // Get all unapproved vendors
     public List<Vendor> getAllUnapprovedVendors() {
         return vendorRepository.findByIsVerifiedFalse();
+    }
+    
+    public Vendor getVendorByUserId(Integer uid) {
+        Optional<Vendor> vendor = vendorRepository.findById(uid);
+        if (vendor.isPresent()) {
+            return vendor.get();
+        } else {
+            throw new ResourceNotFoundException("Vendor not found with ID: " + uid);
+        }
     }
 }
