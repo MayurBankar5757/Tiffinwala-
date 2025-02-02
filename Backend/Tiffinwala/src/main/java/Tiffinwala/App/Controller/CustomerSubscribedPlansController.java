@@ -13,56 +13,44 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/subscriptions")
-@CrossOrigin(origins = "http://localhost:3010") 
-
+@CrossOrigin(origins = "http://localhost:3010")
 public class CustomerSubscribedPlansController {
 
-	 private final CustomerSubscribedPlansService customerSubscribedPlansService;
+    private final CustomerSubscribedPlansService customerSubscribedPlansService;
 
-	    @Autowired
-	    public CustomerSubscribedPlansController(CustomerSubscribedPlansService customerSubscribedPlansService) {
-	        this.customerSubscribedPlansService = customerSubscribedPlansService;
-	    }
+    @Autowired
+    public CustomerSubscribedPlansController(CustomerSubscribedPlansService customerSubscribedPlansService) {
+        this.customerSubscribedPlansService = customerSubscribedPlansService;
+    }
 
-	    // Endpoint to create a subscription
-	    @PostMapping("/create")
-	    public ResponseEntity<?> createSubscription(@RequestBody CustomerSubscriptionDTO subscriptionDTO) {
-	        try {
-	            // Get the current date (live date)
-	            LocalDate liveDate = LocalDate.now();
+    // Endpoint to create a subscription
+    @PostMapping("/subscribePlan")
+    public ResponseEntity<?> createSubscription(@RequestBody CustomerSubscriptionDTO subscriptionDTO) {
+        try {
+            LocalDate liveDate = LocalDate.now();
+            CustomerSubscribedPlans createdPlan = customerSubscribedPlansService.createSubscriptionPlan(
+                    subscriptionDTO.getUserId(),
+                    subscriptionDTO.getSubscriptionPlanId(),
+                    liveDate
+            );
+            return new ResponseEntity<>(createdPlan, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
-	            // Call service method to create a subscription with the live date
-	            CustomerSubscribedPlans createdPlan = customerSubscribedPlansService.createSubscriptionPlan(
-	                    subscriptionDTO.getUserId(),
-	                    subscriptionDTO.getSubscriptionPlanId(),
-	                    liveDate,  // Set live date as orderedDate
-	                    subscriptionDTO.getDuration()  // Pass the duration from React
-	            );
-
-	            // Return the created plan in the response
-	            return new ResponseEntity<>(createdPlan, HttpStatus.CREATED);
-	        } catch (RuntimeException e) {
-	            // Handle any errors that occur during plan creation
-	            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-	        }
-	    }
-	    
-	    
-    // Get all subscriptions by vendor plan ID
-    @GetMapping("/vendor/{planId}")
-    public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionByVendorId(@PathVariable Integer planId) {
+    @GetMapping("/planid/{planId}")
+    public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionBySubcriptionId(@PathVariable Integer planId) {
         List<CustomerSubscribedPlans> subscriptions = customerSubscribedPlansService.getSubscriptionPlansByVendorId(planId);
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 
-    // Get all subscriptions
     @GetMapping
     public ResponseEntity<List<CustomerSubscribedPlans>> getAllSubscriptions() {
         List<CustomerSubscribedPlans> allSubscriptions = customerSubscribedPlansService.getAllSubscriptionPlans();
         return new ResponseEntity<>(allSubscriptions, HttpStatus.OK);
     }
 
-    // Delete subscription by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSubscription(@PathVariable Integer id) {
         try {
@@ -73,7 +61,6 @@ public class CustomerSubscribedPlansController {
         }
     }
 
-    // Get all subscription plans for a specific user
     @GetMapping("/user/{uid}")
     public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionPlansByUserId(@PathVariable Integer uid) {
         List<CustomerSubscribedPlans> plans = customerSubscribedPlansService.getSubscriptionPlansByUserId(uid);

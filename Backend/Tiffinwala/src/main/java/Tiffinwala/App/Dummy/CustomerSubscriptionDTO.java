@@ -6,5 +6,5 @@ import lombok.Data;
 public class CustomerSubscriptionDTO {
     private Integer userId;
     private Integer subscriptionPlanId;
-    private Integer duration; 
+     
 }
