@@ -13,6 +13,7 @@ export default function VendorHome() {
       .then((obj) => {
         localStorage.setItem("loggedVendor", JSON.stringify(obj));
         setVendor(obj);
+        console.log(vendor)
       });
   }, []);
 
@@ -51,7 +52,7 @@ export default function VendorHome() {
       <div className="container" style={{ marginBottom: "50px", textAlign: "center" }}>
         <div className="row g-4">
           {[
-            { title: "Update Profile", text: "Update your account details.", link: "/updateVendor" },
+            { title: "Update Profile", text: "Update your account details.", link: "/updateUser" },
             { title: "Add Subscription Plan", text: "Add new Subscription Plan Details", link: "/addSubcriptionPlan" },
             { title: "Display Subscription Plans", text: "Show all Added Subscription Plans", link: "/vendorAllPlans" },
             { title: "Enabled Subscription Plan", text: "Show Enabled Subscription Plans", link: "/enabledPlans" },

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddSubscription = () => {
+const EditSubscription = () => {
   const navigate = useNavigate();
+  const { planId } = useParams();
   const [vendor, setVendor] = useState(null);
   const [subPlan, setSubPlan] = useState({
     vendorId: "",
@@ -12,23 +13,13 @@ const AddSubscription = () => {
     duration: "",
   });
   
-  const [tiffins, setTiffins] = useState(() => {
-    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-    const mealTypes = ["LUNCH"];
-    let initialTiffins = {};
-    days.forEach(day => {
-      mealTypes.forEach(meal => {
-        initialTiffins[`${day}_${meal}`] = { name: "", description: "", price: "", foodType: "" };
-      });
-    });
-    return initialTiffins;
-  });
-
+  const [tiffins, setTiffins] = useState({});
   const [subPlanImage, setSubPlanImage] = useState(null);
   const [includeDinner, setIncludeDinner] = useState(false);
+  const { id } = useParams();  // Changed from planId to id
 
   useEffect(() => {
-    const fetchVendor = async () => {
+    const fetchVendorAndPlan = async () => {
       try {
         const loggedUser = JSON.parse(localStorage.getItem("loggedUser"))?.uid;
         if (!loggedUser) {
@@ -37,23 +28,58 @@ const AddSubscription = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:8081/api/vendors/vendor/${loggedUser}`);
-        if (!response.ok) {
+        const vendorResponse = await fetch(`http://localhost:8081/api/vendors/vendor/${loggedUser}`);
+        if (!vendorResponse.ok) {
           alert("Not Authorized");
           navigate("/login");
           return;
         }
 
-        const vendorData = await response.json();
+        const vendorData = await vendorResponse.json();
         setVendor(vendorData);
-        setSubPlan(prevState => ({ ...prevState, vendorId: vendorData.vendorId }));
+
+        const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${id}`);
+        if (!planResponse.ok) {
+          alert("Plan not found");
+          navigate("/vendor_home");
+          return;
+        }
+
+        const planData = await planResponse.json();
+        setSubPlan({
+          vendorId: planData.vendorId,
+          name: planData.name,
+          description: planData.description,
+          price: planData.price,
+          duration: planData.duration,
+        });
+
+        const tiffinsResponse = await fetch(`http://localhost:8081/api/tiffins/plan/${id}`);
+        if (!tiffinsResponse.ok) {
+          alert("Failed to fetch tiffins");
+          return;
+        }
+
+        const tiffinsData = await tiffinsResponse.json();
+        const tiffinsMap = {};
+        tiffinsData.forEach(tiffin => {
+            console.log(tiffin)
+          tiffinsMap[`${tiffin.day}`] = {
+            name: tiffin.name,
+            description: tiffin.description,
+            price: tiffin.price,
+            foodType: tiffin.foodType,
+          };
+        });
+        setTiffins(tiffinsMap);
+        setIncludeDinner(Object.keys(tiffinsMap).some(key => key.endsWith("_DINNER")));
       } catch (error) {
-        console.error("Error fetching vendor:", error);
+        console.error("Error fetching vendor or plan:", error);
         alert("Something went wrong. Please try again.");
       }
     };
-    fetchVendor();
-  }, [navigate]);
+    fetchVendorAndPlan();
+  }, [navigate, planId]);
 
   const handleSubPlanChange = (e) => {
     const { name, value } = e.target;
@@ -108,19 +134,16 @@ const AddSubscription = () => {
         formData.append("image", subPlanImage);
       }
       
-      const planResponse = await fetch("http://localhost:8081/api/vendor-subscription-plans/create", {
-        method: "POST",
+      const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/update/${planId}`, {
+        method: "PUT",
         body: formData,
       });
       if (!planResponse.ok) {
         const errorData = await planResponse.json();
-        alert(errorData.message || "Failed to create subscription plan");
+        alert(errorData.message || "Failed to update subscription plan");
         return;
       }
       
-      const planData = await planResponse.json();
-      const planId = planData.planId;
-
       for (const [dayMeal, tiffin] of Object.entries(tiffins)) {
         const [day, meal] = dayMeal.split("_");
         const tiffinBody = {
@@ -131,18 +154,18 @@ const AddSubscription = () => {
           description: tiffin.description,
         };
 
-        const tiffinResponse = await fetch("http://localhost:8081/api/tiffins/createtiffin", {
-          method: "POST",
+        const tiffinResponse = await fetch(`http://localhost:8081/api/tiffins/${dayMeal}`, {
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(tiffinBody),
         });
 
         if (!tiffinResponse.ok) {
-          console.error(`Failed to add tiffin for ${dayMeal}`);
-          alert(`Failed to add tiffin for ${dayMeal}`);
+          console.error(`Failed to update tiffin for ${dayMeal}`);
+          alert(`Failed to update tiffin for ${dayMeal}`);
         }
       }
-      alert("Subscription Plan and Tiffins Added Successfully");
+      alert("Subscription Plan and Tiffins Updated Successfully");
       navigate("/vendor_home");
     } catch (error) {
       console.error("Error:", error);
@@ -153,7 +176,7 @@ const AddSubscription = () => {
   return (
     <div className="container mt-5">
       <div className="card shadow-lg p-4">
-        <h2 className="text-center">Add New Subscription Plan</h2>
+        <h2 className="text-center">Edit Subscription Plan</h2>
         <form onSubmit={handleSubmit}>
           <input type="text" name="name" placeholder="Plan Name" className="form-control mb-3" value={subPlan.name} onChange={handleSubPlanChange} required />
           <textarea name="description" placeholder="Description" className="form-control mb-3" value={subPlan.description} onChange={handleSubPlanChange} required />
@@ -182,11 +205,11 @@ const AddSubscription = () => {
               ))}
             </tbody>
           </table>
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <button type="submit" className="btn btn-primary">Update</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default AddSubscription;
+export default EditSubscription;

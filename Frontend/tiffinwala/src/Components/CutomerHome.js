@@ -6,7 +6,6 @@ export default function CustomerHome() {
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState(null); // Store user info
 
-
   useEffect(() => {
     fetch("http://localhost:8081/api/vendor-subscription-plans/getAllSubcriptionPlan")
       .then((response) => {
@@ -22,21 +21,29 @@ export default function CustomerHome() {
         console.error("Error fetching subscription plans:", error);
         setError("Failed to fetch subscription plans.");
       });
-      const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
-     if (storedUser) {
+
+    const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (storedUser) {
       setUserInfo(storedUser); // Set user info if available
     }
   }, []);
 
   return (
     <div>
-       {/* Display customer info */}
-       {userInfo && (
-          <div className="alert alert-info">
-            <h5><strong>Welcome, {userInfo.fname} {userInfo.lname}!</strong></h5>
-            <p> <strong>Delivering to your address : </strong>{userInfo.address.area}, {userInfo.address.city}, {userInfo.address.state} - {userInfo.address.pincode}   </p>
+      {/* Display customer info */}
+      {userInfo && (
+        <div className="alert alert-info">
+          <h5><strong>Welcome, {userInfo.fname} {userInfo.lname}!</strong></h5>
+          <p><strong>Delivering to your address : </strong>{userInfo.address.area}, {userInfo.address.city}, {userInfo.address.state} - {userInfo.address.pincode}</p>
+          <div className="d-flex justify-content-between">
+            {/* Update Profile Button */}
+            <Link to="/UpdateCustomerProfile" className="btn btn-warning btn-sm">
+              Update Profile
+            </Link>
           </div>
-        )}
+        </div>
+      )}
+      
       <main className="container mt-6">
         {error && <p className="text-danger">{error}</p>}
         <div className="container mt-4">
@@ -53,7 +60,6 @@ export default function CustomerHome() {
                   <div className="card-body">
                     <h5 className="card-title">{plan.name}</h5>
                     <h6 className="card-text badge bg-info">{plan.duration}</h6>
-                    
                     <p className="card-text">{plan.description}</p>
                     <p className="card-text">
                       <strong>Price:</strong> ₹{plan.price}

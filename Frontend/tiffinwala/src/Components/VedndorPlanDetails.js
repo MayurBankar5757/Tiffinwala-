@@ -90,12 +90,6 @@ export default function VendorPlanDetails() {
                             {tiffins.map((tiffin) => (
                                 <div key={tiffin.tiffinId} className="col-md-4 mb-4">
                                     <div className="card shadow-lg border-0 rounded-3">
-                                        <img
-                                            src="https://via.placeholder.com/300x200" // You can use an actual image URL here
-                                            className="card-img-top"
-                                            alt={tiffin.name}
-                                            style={{ borderTopLeftRadius: '0.5rem', borderTopRightRadius: '0.5rem', height: '200px', objectFit: 'cover' }}
-                                        />
                                         <div className="card-body">
                                             <h5 className="card-title text-primary">{tiffin.name}</h5>
                                             <h6 className="card-subtitle mb-3 text-muted">{tiffin.day}</h6>

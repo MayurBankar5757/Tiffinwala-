@@ -16,7 +16,6 @@ public class VendorSubscriptionPlan {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    @Column(name = "Plan_id")
 	    private Integer planId;
-
 	    @ManyToOne(fetch = FetchType.EAGER)
 	    @JoinColumn(name = "Vendor_id", nullable = false)
 	    private Vendor vendor;  // Assuming Vendor entity exists

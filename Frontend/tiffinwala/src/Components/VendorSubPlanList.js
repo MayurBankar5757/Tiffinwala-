@@ -6,25 +6,59 @@ export default function VendorSubPlanList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const loginid = JSON.parse(localStorage.getItem("loggedUser")).uid;
+    const [vendorId, setVendorId] = useState(null);
 
     useEffect(() => {
-        const fetchPlans = async () => {
+        const fetchVendorAndPlans = async () => {
             try {
-                const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/vendor/${loginid}`);
-                if (!response.ok) {
+                // Retrieve logged-in user ID from localStorage
+                const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+                
+                if (!loggedUser || !loggedUser.uid) {
+                    throw new Error("User not logged in or UID missing.");
+                }
+
+                const userId = parseInt(loggedUser.uid, 10);
+                if (isNaN(userId)) {
+                    throw new Error("Invalid user ID format.");
+                }
+
+                // Fetch vendor details
+                const vendorResponse = await fetch(`http://localhost:8081/api/vendors/vendor/${userId}`);
+                if (!vendorResponse.ok) {
+                    throw new Error("Failed to fetch vendor details.");
+                }
+
+                const vendorData = await vendorResponse.json();
+                console.log(vendorData);
+                if (!vendorData || !vendorData.vendorId) {
+                    throw new Error("Vendor ID not found.");
+                }
+
+                const parsedVendorId = parseInt(vendorData.vendorId, 10);
+                if (isNaN(parsedVendorId)) {
+                    throw new Error("Invalid vendor ID format.");
+                }
+
+                setVendorId(parsedVendorId);
+
+                // Fetch subscription plans using the vendor ID
+                const plansResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/vendor/${parsedVendorId}`);
+                if (!plansResponse.ok) {
                     throw new Error("Failed to fetch subscription plans.");
                 }
-                const data = await response.json();
-                setSubPlanList(data);
+
+                const plansData = await plansResponse.json();
+                setSubPlanList(plansData);
             } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-        fetchPlans();
-    }, [loginid]);
+
+        fetchVendorAndPlans();
+    }, []);
 
     const enablePlan = async (planId) => {
         try {
@@ -54,13 +88,28 @@ export default function VendorSubPlanList() {
         }
     };
 
+    const deletePlan = async (planId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}`, {
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete subscription plan.");
+            }
+            // Remove the deleted plan from the list
+            setSubPlanList(subPlanList.filter(p => p.planId !== planId));
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
         <div className="container my-4">
             <h3>All Subscription Plans</h3>
-            <table className="table table-bordered" style={{ textAlign: "center" }}>
+            <table className="table table-bordered text-center">
                 <thead className="bg-dark text-light">
                     <tr>
                         <th>Name</th>
@@ -71,6 +120,7 @@ export default function VendorSubPlanList() {
                         <th>Customers</th>
                         <th>Edit</th>
                         <th>Availability</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,6 +143,9 @@ export default function VendorSubPlanList() {
                                 ) : (
                                     <button className="btn btn-success" onClick={() => enablePlan(plan.planId)}>Enable</button>
                                 )}
+                            </td>
+                            <td>
+                                <button className="btn btn-danger" onClick={() => deletePlan(plan.planId)}>Delete</button>
                             </td>
                         </tr>
                     ))}

@@ -2,7 +2,7 @@ import './App.css';
 import LoginFom from './Components/LoginForm';
 import Home from './Components/Home';
 import { Route, Routes } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, RouterProvider } from 'react-router-dom';
 import AdminHome from './Components/AdminHome';
 import { useSelector } from 'react-redux';
 import LogoutComp from './Components/LogoutComponent';
@@ -16,7 +16,10 @@ import Navbar from './Components/Navbar';
 import VendorSubPlanList from './Components/VendorSubPlanList';
 import ShowSubscribedCustomers from './Components/ShowSubscribedCustomers';
 import AddSubscription from './Components/CreateSubscriptionPlan';
+import EditSubscription from './Components/EditSubscriptionPlan';
+import UpdateUserForm from './Components/UpdateProfile';
 
+import UpdateCustomerForm from './Components/CustomerProfileUpdate';
 function App() {
   const mystate = useSelector((state) => state.logged);
   console.log(mystate);
@@ -46,7 +49,9 @@ function App() {
 
           <Route path="/vendorAllPlans" element={<VendorSubPlanList />} />
           <Route path="/showSubscribedCustomers/:id" element={<ShowSubscribedCustomers />} />
-
+          <Route path='/editSubscriptionPlan/:id' element={<EditSubscription/>}/>
+          <Route path= '/updateUser' element={<UpdateUserForm/>}/>
+          <Route path='/UpdateCustomerProfile' element = {<UpdateCustomerForm/>}/>
 
         </Routes>
       </div>
