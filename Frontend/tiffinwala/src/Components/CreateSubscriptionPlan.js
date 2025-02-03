@@ -5,11 +5,11 @@ const AddSubscription = () => {
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [subPlan, setSubPlan] = useState({
-    vendorId: "", // Add vendorId to the initial state
+    vendorId: "",
     name: "",
     description: "",
     price: "",
-    planType: "",
+    duration: "", // Changed from planType to duration
   });
   const [tiffins, setTiffins] = useState({
     SUNDAY: { name: "", description: "", price: "", foodType: "" },
@@ -53,24 +53,16 @@ const AddSubscription = () => {
     });
   };
 
-  // Handle image upload for tiffins
-  const handleTiffinImageUpload = (day, e) => {
-    setTiffins({
-      ...tiffins,
-      [day]: { ...tiffins[day], image: e.target.files[0] },
-    });
-  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate all fields
+  
     if (
       !subPlan.name ||
       !subPlan.description ||
       !subPlan.price ||
-      !subPlan.planType ||
+      !subPlan.duration ||
       Object.values(tiffins).some(
         (tiffin) => !tiffin.name || !tiffin.description || !tiffin.price || !tiffin.foodType
       )
@@ -78,87 +70,72 @@ const AddSubscription = () => {
       alert("Please fill all fields");
       return;
     }
-
+  
     try {
-      // Step 1: Create the subscription plan
-      const planResponse = await fetch(
-        `http://localhost:8081/api/vendor-subscription-plans/create`,
-        {
+      // Create FormData for subscription plan
+      const formData = new FormData();
+      formData.append("vendorId", subPlan.vendorId);
+      formData.append("name", subPlan.name);
+      formData.append("description", subPlan.description);
+      formData.append("price", subPlan.price);
+      formData.append("duration", subPlan.duration);
+      formData.append("isAvaliable", true); // Assuming available
+  
+      if (subPlanImage) {
+        formData.append("image", subPlanImage);
+      }
+  
+      // Step 1: Create Subscription Plan
+      const planResponse = await fetch("http://localhost:8081/api/vendor-subscription-plans/create", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!planResponse.ok) {
+        const errorData = await planResponse.json();
+        alert(errorData.message || "Failed to create subscription plan");
+        return;
+      }
+  
+      const planData = await planResponse.json();
+      console.log("the New  plan data is :" , planData);
+      const planId = planData.planId; // Ensure correct field name
+      console.log("Plan created with ID:", planId);
+  
+      // Step 2: Add Tiffins with v_sub_Id
+      for (const [day, tiffin] of Object.entries(tiffins)) {
+        const tiffinBody = {
+          v_sub_Id: planId, // Ensure this field is present
+          day: `${day.toUpperCase()}_LUNCH`, // Ensure correct format
+          name: tiffin.name,
+          foodType: tiffin.foodType,
+          description: tiffin.description,
+        };
+  
+        console.log("Sending Tiffin:", tiffinBody); // Debugging
+  
+        const tiffinResponse = await fetch("http://localhost:8081/api/tiffins/createtiffin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(subPlan), // This now includes vendorId
-        }
-      );
-
-      if (!planResponse.ok) {
-        throw new Error("Failed to create subscription plan");
-      }
-
-      const planData = await planResponse.json();
-      const planId = planData.id;
-
-      // Step 2: Upload subscription plan image (if provided)
-      if (subPlanImage) {
-        const formData = new FormData();
-        formData.append("subPlanImage", subPlanImage);
-
-        const imageResponse = await fetch(
-          `http://localhost:8081/api/subscription/${planId}/subPlanImage`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (!imageResponse.ok) {
-          throw new Error("Failed to upload subscription plan image");
-        }
-      }
-
-      // Step 3: Add tiffins for each day
-      for (const [day, tiffin] of Object.entries(tiffins)) {
-        const tiffinResponse = await fetch(
-          `http://localhost:8081/api/tiffins/addTiffin/${planId}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...tiffin, day: `${day.toUpperCase()}_LUNCH` }),
-          }
-        );
-
+          body: JSON.stringify(tiffinBody),
+        });
+  
         if (!tiffinResponse.ok) {
-          throw new Error(`Failed to add tiffin for ${day}`);
-        }
-
-        const tiffinData = await tiffinResponse.json();
-        const tiffinId = tiffinData.id;
-
-        // Step 4: Upload tiffin image (if provided)
-        if (tiffin.image) {
-          const formData = new FormData();
-          formData.append("tiffinImage", tiffin.image);
-
-          const tiffinImageResponse = await fetch(
-            `http://localhost:8081/api/tiffins/${tiffinId}/tiffinImage`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
-
-          if (!tiffinImageResponse.ok) {
-            throw new Error(`Failed to upload tiffin image for ${day}`);
-          }
+          const error = await tiffinResponse.text();
+          console.error(`Failed to add tiffin for ${day}:`, error);
+          alert(`Failed to add tiffin for ${day}`);
         }
       }
-
-      alert("Subscription Plan Added Successfully");
-      navigate("/vendor"); // Redirect to vendor dashboard
+  
+      alert("Subscription Plan and Tiffins Added Successfully");
+      navigate("/vendor_home"); // Fixed the route typo
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred. Please try again.");
     }
   };
+  
+  
 
   return (
     <div className="container mt-5">
@@ -217,20 +194,20 @@ const AddSubscription = () => {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="planType" className="form-label">
+            <label htmlFor="duration" className="form-label">
               Plan Type
             </label>
             <select
-              id="planType"
-              name="planType"
+              id="duration"
+              name="duration"
               className="form-select"
-              value={subPlan.planType}
+              value={subPlan.duration}
               onChange={handleSubPlanChange}
               required
             >
               <option value="">--- Select Plan Type ---</option>
-              <option value="WEEKLY">Weekly</option>
-              <option value="MONTHLY">Monthly</option>
+              <option value="SEVEN_DAYS">SEVEN_DAYS</option>
+              <option value="THIRTY_DAYS">THIRTY_DAYS</option>
             </select>
           </div>
 
@@ -283,17 +260,14 @@ const AddSubscription = () => {
                       />
                     </td>
                     <td>
-                      <select
+                      <textarea
                         name="foodType"
-                        className="form-select"
+                        className="form-control"
                         value={tiffin.foodType}
                         onChange={(e) => handleTiffinChange(day, e)}
                         required
-                      >
-                        <option value="">Select Food Type</option>
-                        <option value="VEG">Veg</option>
-                        <option value="NONVEG">Non-Veg</option>
-                      </select>
+                      />
+                      
                     </td>
                     <td>
                       <input

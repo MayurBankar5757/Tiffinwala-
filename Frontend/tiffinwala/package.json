@@ -14,6 +14,7 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^4.2.4",
     "webpack-dev-server": "^5.2.0"
+    
   },
   "scripts": {
     "start": "set PORT=3010 && react-scripts start",
@@ -27,6 +28,7 @@
       "react-app/jest"
     ]
   },
+    "proxy": "http://localhost:8081",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -39,4 +41,5 @@
       "last 1 safari version"
     ]
   }
+  
 }

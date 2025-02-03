@@ -2,6 +2,7 @@ package Tiffinwala.App.Controller;
 
 import Tiffinwala.App.Dummy.VendorSubscriptionPlanDTO;
 import Tiffinwala.App.Entities.VendorSubscriptionPlan;
+import Tiffinwala.App.Enum.SubscriptionDuration;
 import Tiffinwala.App.Services.VendorSubscriptionPlanService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,33 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
+@CrossOrigin(origins = "*") 
 @RestController
 @RequestMapping("/api/vendor-subscription-plans")
-@CrossOrigin(origins = "http://localhost:3010")
 public class VendorSubscriptionPlanController {
 
     @Autowired
     private VendorSubscriptionPlanService vendorSubscriptionPlanService;
 
     @PostMapping("/create")
-    public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(@RequestBody VendorSubscriptionPlanDTO dto) {
+    public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(
+            @RequestParam("vendorId") Integer vendorId,
+            @RequestParam("name") String name,
+            @RequestParam("price") Integer price,
+            @RequestParam("description") String description,
+            @RequestParam("isAvaliable") boolean isAvaliable,
+            @RequestParam("duration") SubscriptionDuration duration,
+            @RequestParam(value = "image", required = false) MultipartFile image) {  // Accept image file
+
+        VendorSubscriptionPlanDTO dto = new VendorSubscriptionPlanDTO();
+        dto.setVendorId(vendorId);
+        dto.setName(name);
+        dto.setPrice(price);
+        dto.setDescription(description);
+        dto.setAvaliable(isAvaliable);
+        dto.setDuration(duration);
+        dto.setImage(image);  // Set the image file
+
         VendorSubscriptionPlan newPlan = vendorSubscriptionPlanService.createSubscriptionPlan(dto);
         return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     }

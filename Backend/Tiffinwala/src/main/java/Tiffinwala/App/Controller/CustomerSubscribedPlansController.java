@@ -1,6 +1,7 @@
 package Tiffinwala.App.Controller;
 
 import Tiffinwala.App.Dummy.CustomerSubscriptionDTO;
+
 import Tiffinwala.App.Entities.CustomerSubscribedPlans;
 import Tiffinwala.App.Services.CustomerSubscribedPlansService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@CrossOrigin(origins = "*") 
 @RestController
 @RequestMapping("/api/subscriptions")
-@CrossOrigin(origins = "http://localhost:3010")
 public class CustomerSubscribedPlansController {
 
     private final CustomerSubscribedPlansService customerSubscribedPlansService;

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*") 
 @RestController
 @RequestMapping("/api/vendors")
-@CrossOrigin(origins = "http://localhost:3010")
 public class VendorController {
 
     @Autowired
