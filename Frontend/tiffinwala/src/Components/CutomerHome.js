@@ -5,6 +5,7 @@ export default function CustomerHome() {
   const [plans, setPlans] = useState([]);
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState(null); // Store user info
+  console.log(userInfo)
 
   useEffect(() => {
     fetch("http://localhost:8081/api/vendor-subscription-plans/getAllSubcriptionPlan")
@@ -27,6 +28,41 @@ export default function CustomerHome() {
       setUserInfo(storedUser); // Set user info if available
     }
   }, []);
+
+  // Function to handle subscription
+  const handleSubscribe = (subscriptionPlanId) => {
+    if (!userInfo) {
+      alert("Please log in to subscribe.");
+      return;
+    }
+
+    const subscriptionData = {
+      userId: userInfo.uid, 
+      subscriptionPlanId: subscriptionPlanId,
+    };
+
+    fetch("http://localhost:8081/api/subscriptions/subscribePlan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(subscriptionData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        alert("Subscription successful!");
+        console.log("Subscription response:", data);
+      })
+      .catch((error) => {
+        console.error("Error subscribing to plan:", error);
+        alert("Failed to subscribe. Please try again.");
+      });
+  };
 
   return (
     <div>
@@ -72,6 +108,14 @@ export default function CustomerHome() {
                         Get Details
                       </Link>
                     </div>
+                    {/* Subscribe Button */}
+                    <button
+                      className="btn btn-success btn-sm mt-2"
+                      onClick={() => handleSubscribe(plan.planId)}
+                      disabled={!plan.isAvailable}
+                    >
+                      Subscribe
+                    </button>
                   </div>
                 </div>
               </div>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { useParams, Link } from "react-router-dom";
 
 export default function VendorPlanDetails() {
     const { id } = useParams(); // Get the plan ID from the URL
     const [plan, setPlan] = useState(null);
     const [tiffins, setTiffins] = useState([]); // To store tiffin details
     const [error, setError] = useState("");
+    const [userInfo, setUserInfo] = useState(null); // Store user info
 
     // Fetch the plan details
     useEffect(() => {
@@ -40,7 +40,48 @@ export default function VendorPlanDetails() {
                 console.error("Error fetching tiffins:", error);
                 setError("Failed to fetch tiffins.");
             });
+
+        // Fetch user info from localStorage
+        const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
+        if (storedUser) {
+            setUserInfo(storedUser); // Set user info if available
+        }
     }, [id]); // Re-run when `id` changes
+
+    // Function to handle subscription
+    const handleSubscribe = () => {
+        if (!userInfo) {
+            alert("Please log in to subscribe.");
+            return;
+        }
+
+        const subscriptionData = {
+            userId: userInfo.uid, // Assuming the user object has a userId field
+            subscriptionPlanId: id, // Use the plan ID from the URL
+        };
+
+        fetch("http://localhost:8081/api/subscriptions/subscribePlan", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(subscriptionData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert("Subscription successful!");
+                console.log("Subscription response:", data);
+            })
+            .catch((error) => {
+                console.error("Error subscribing to plan:", error);
+                alert("Failed to subscribe. Please try again.");
+            });
+    };
 
     if (error) {
         return <p className="text-danger">{error}</p>;
@@ -77,8 +118,17 @@ export default function VendorPlanDetails() {
                             {plan.isAvailable ? "Available" : "Not Available"}
                         </span>
                     </div>
-                    <div className="text-center mt-5">
-                        <Link to="/customer_home" className="btn btn-secondary px-4 py-2">
+
+                    {/* Subscribe Button */}
+                    <div className="text-center mt-4">
+                        <button
+                            className="btn btn-success px-4 py-2"
+                            onClick={handleSubscribe}
+                            disabled={!plan.isAvailable}
+                        >
+                            Subscribe
+                        </button>
+                        <Link to="/customer_home" className="btn btn-secondary px-4 py-2 ms-3">
                             Back to Plans
                         </Link>
                     </div>

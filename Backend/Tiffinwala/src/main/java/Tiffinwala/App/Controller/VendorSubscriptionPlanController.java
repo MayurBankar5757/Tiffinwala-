@@ -91,7 +91,6 @@ public class VendorSubscriptionPlanController {
         return new ResponseEntity<>(enabledPlans, HttpStatus.OK);
     }
     
-    
     // display all disabled plans
     @GetMapping("/disabled")
     public ResponseEntity<List<VendorSubscriptionPlan>> getDisabledSubscriptionPlans() {
