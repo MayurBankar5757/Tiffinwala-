@@ -17,7 +17,7 @@ const EditSubscription = () => {
   const [subPlanImage, setSubPlanImage] = useState(null);
   const [includeDinner, setIncludeDinner] = useState(false);
   const { id } = useParams();  // Changed from planId to id
-
+   console.log(id);
   useEffect(() => {
     const fetchVendorAndPlan = async () => {
       try {
@@ -67,7 +67,6 @@ const EditSubscription = () => {
           tiffinsMap[`${tiffin.day}`] = {
             name: tiffin.name,
             description: tiffin.description,
-            price: tiffin.price,
             foodType: tiffin.foodType,
           };
         });
@@ -101,7 +100,7 @@ const EditSubscription = () => {
       const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
       const updatedTiffins = { ...tiffins };
       days.forEach(day => {
-        updatedTiffins[`${day}_DINNER`] = { name: "", description: "", price: "", foodType: "" };
+        updatedTiffins[`${day}_DINNER`] = { name: "", description: "", foodType: "" };
       });
       setTiffins(updatedTiffins);
     } else {
@@ -118,7 +117,7 @@ const EditSubscription = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!subPlan.name || !subPlan.description || !subPlan.price || !subPlan.duration ||
-      Object.values(tiffins).some(tiffin => !tiffin.name || !tiffin.description || !tiffin.price || !tiffin.foodType)) {
+      Object.values(tiffins).some(tiffin => !tiffin.name || !tiffin.description || !tiffin.foodType)) {
       alert("Please fill all fields");
       return;
     }
@@ -134,7 +133,7 @@ const EditSubscription = () => {
         formData.append("image", subPlanImage);
       }
       
-      const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/update/${planId}`, {
+      const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/update/${id}`, {
         method: "PUT",
         body: formData,
       });
@@ -192,7 +191,7 @@ const EditSubscription = () => {
             <label className="form-check-label" htmlFor="includeDinner">Include Dinner</label>
           </div>
           <table className="table">
-            <thead><tr><th>Day & Meal</th><th>Name</th><th>Description</th><th>Food Type</th><th>Price</th></tr></thead>
+            <thead><tr><th>Day & Meal</th><th>Name</th><th>Description</th><th>Food Type</th></tr></thead>
             <tbody>
               {Object.entries(tiffins).map(([dayMeal, tiffin]) => (
                 <tr key={dayMeal}>
@@ -200,7 +199,6 @@ const EditSubscription = () => {
                   <td><input type="text" name="name" className="form-control" value={tiffin.name} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                   <td><textarea name="description" className="form-control" value={tiffin.description} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                   <td><input type="text" name="foodType" className="form-control" value={tiffin.foodType} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
-                  <td><input type="number" name="price" className="form-control" value={tiffin.price} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                 </tr>
               ))}
             </tbody>
