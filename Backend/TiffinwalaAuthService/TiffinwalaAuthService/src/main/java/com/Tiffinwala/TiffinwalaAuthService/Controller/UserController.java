@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +32,12 @@ public class UserController {
     private UserService userService;
     
     // Login endpoint
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginCheck login) {
         try {
-            User user = userService.getLogin(login.getEmail(), login.getPwd());
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            String token = userService.getLogin(login.getEmail(), login.getPwd());
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
@@ -47,12 +49,15 @@ public class UserController {
         try {
             User user = userService.getUserById(uid);
             return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to retrieve user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // Get all customers for admin
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") 
     @GetMapping("/getAllCustomers")
     public ResponseEntity<?> getAllCustomers() {
         try {

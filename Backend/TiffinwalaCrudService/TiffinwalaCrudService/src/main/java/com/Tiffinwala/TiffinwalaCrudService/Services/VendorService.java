@@ -90,7 +90,7 @@ public class VendorService {
     }
     
     public Vendor getVendorByUserId(Integer uid) {
-        Optional<Vendor> vendor = vendorRepository.findById(uid);
+        Optional<Vendor> vendor = Optional.ofNullable(vendorRepository.findVendorByUserUid(uid));
         if (vendor.isPresent()) {
             return vendor.get();
         } else {

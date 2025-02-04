@@ -38,16 +38,21 @@ public class VendorController {
     @PutMapping("/{id}/verify")
     public ResponseEntity<Vendor> updateVerificationStatus(
             @PathVariable Integer id, @RequestParam Boolean isVerified) {
-        Vendor updatedVendor = vendorService.updateVerificationStatus(id, isVerified);
-        return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
+        try {
+            Vendor updatedVendor = vendorService.updateVerificationStatus(id, isVerified);
+            return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
     }
 
     // Register a new user
     @PostMapping("/RegUser")
     public ResponseEntity<String> saveUser(@RequestBody RegDummy r) {
         try {
-            vendorService.saveUser(r);
-            return ResponseEntity.ok("User registered successfully.");
+            String jwtToken = vendorService.saveUser(r);
+            return ResponseEntity.ok("User registered successfully. Token: " + jwtToken);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error saving user: " + e.getMessage());
@@ -68,12 +73,13 @@ public class VendorController {
         return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
     
+    // Get Vendor by User ID (UID)
     @GetMapping("/vendor/{uid}")
     public ResponseEntity<Vendor> getVendorByUserUid(@PathVariable Integer uid) {
-        Vendor vendor = vendorService.getVendorByUserId(uid);
-        if (vendor != null) {
+        try {
+            Vendor vendor = vendorService.getVendorByUserId(uid);
             return ResponseEntity.ok(vendor);
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
