@@ -1,6 +1,7 @@
 package com.Tiffinwala.TiffinwalaAuthService.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.Tiffinwala.TiffinwalaAuthService.Entities.Role;
@@ -8,9 +9,9 @@ import com.Tiffinwala.TiffinwalaAuthService.Entities.User;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ConflictException;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ResourceNotFoundException;
 import com.Tiffinwala.TiffinwalaAuthService.Repository.RoleRepository;
+import com.Tiffinwala.TiffinwalaAuthService.Repository.UserRepository;
 import com.Tiffinwala.TiffiwalaAuthService.Dummy.UserDummy;
-
-import org.springframework.dao.DataIntegrityViolationException;
+import com.Tiffinwala.TiffinwalaAuthService.Services.JwtService;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,23 +20,16 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private com.Tiffinwala.TiffinwalaAuthService.Repository.UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private RoleRepository roleRepository;
 
-    // Create a new user
-    public User createUser(User user) {
-        try {
-            Role role = roleRepository.findById(user.getRole().getRoleId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + user.getRole().getRoleId()));
-
-            user.setRole(role);
-            return userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Duplicate entry detected. Please ensure all fields are unique.");
-        }
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private JwtService jwtService;
 
     // Get a user by ID
     public User getUserById(Integer uid) {
@@ -50,7 +44,7 @@ public class UserService {
 
     // Get all customers
     public List<User> getAllCustomers() {
-        Integer rid = 3; // Assuming role id 3 represents "customer"
+        Integer rid = 3;
         Role role = roleRepository.findById(rid)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + rid));
         return userRepository.getAllCustomers(role);
@@ -74,7 +68,7 @@ public class UserService {
 
         existingUser.setFname(userRequest.getFname());
         existingUser.setLname(userRequest.getLname());
-        existingUser.setPassword(userRequest.getPassword()); // Ensure password hashing if required
+        existingUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         existingUser.setContact(userRequest.getContact());
         existingUser.setRole(role);
 
@@ -88,16 +82,22 @@ public class UserService {
         userRepository.delete(existingUser);
     }
 
-    // Get user by email
+    // Get user by email 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     }
 
-    // Login method
-    public User getLogin(String email, String pwd) {
-        Optional<User> userOpt = userRepository.getLogin(email, pwd);
-        return userOpt.orElseThrow(() -> new ResourceNotFoundException("Invalid email or password"));
+    // Login method with authentication
+    public String getLogin(String email, String pwd) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        User user = userOpt.orElseThrow(() -> new ResourceNotFoundException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(pwd, user.getPassword())) {
+            throw new ResourceNotFoundException("Invalid email or password");
+        }
+
+        return jwtService.generateToken(user.getEmail());
     }
 
     // Get user by role

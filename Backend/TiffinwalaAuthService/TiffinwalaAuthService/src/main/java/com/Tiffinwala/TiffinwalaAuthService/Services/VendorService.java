@@ -31,6 +31,9 @@ public class VendorService {
     @Autowired
     private RoleServices roleServices;
 
+    @Autowired
+    private JwtService jwtService;
+
     // Get all vendors
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();
@@ -46,7 +49,7 @@ public class VendorService {
 
     // Save a new user and associated vendor if applicable
     @Transactional
-    public void saveUser(RegDummy r) {
+    public String saveUser(RegDummy r) {
         try {
             User user = new User();
             user.setFname(r.getFname());
@@ -74,6 +77,8 @@ public class VendorService {
                 vendor.setUser(user);
                 vendorRepository.save(vendor);
             }
+            
+            return jwtService.generateToken(user.getEmail()); // Generate JWT token
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Data integrity violation: Duplicate entry for email or contact.");
         }
@@ -99,5 +104,4 @@ public class VendorService {
         return vendorRepository.findVendorByUserUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found for User ID: " + uid));
     }
-
 }
