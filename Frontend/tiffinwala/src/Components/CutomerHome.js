@@ -5,7 +5,7 @@ export default function CustomerHome() {
   const [plans, setPlans] = useState([]);
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState(null); // Store user info
-  console.log(userInfo)
+  console.log(userInfo);
 
   useEffect(() => {
     fetch("http://localhost:8102/api/vendor-subscription-plans/getAllSubcriptionPlan")
@@ -29,6 +29,12 @@ export default function CustomerHome() {
     }
   }, []);
 
+  // Debugging: Logs whenever `plans` or `userInfo` updates
+  useEffect(() => {
+    console.log("Updated plans:", plans);
+    console.log("User info:", userInfo);
+  }, [plans, userInfo]);
+
   // Function to handle subscription
   const handleSubscribe = (subscriptionPlanId) => {
     if (!userInfo) {
@@ -37,7 +43,7 @@ export default function CustomerHome() {
     }
 
     const subscriptionData = {
-      userId: userInfo.uid, 
+      userId: userInfo.uid,
       subscriptionPlanId: subscriptionPlanId,
     };
 
@@ -79,7 +85,7 @@ export default function CustomerHome() {
           </div>
         </div>
       )}
-      
+
       <main className="container mt-6">
         {error && <p className="text-danger">{error}</p>}
         <div className="container mt-4">
@@ -87,12 +93,30 @@ export default function CustomerHome() {
             {plans.map((plan, index) => (
               <div className="col-md-4 mb-4" key={index}>
                 <div className="card shadow-sm h-100">
-                  <img
-                    src={plan.image}
-                    className="card-img-top"
-                    alt={plan.name}
-                    style={{ height: "200px", objectFit: "cover" }}
-                  />
+                  {/* Handle Base64 Image rendering */}
+                  {plan.image ? (
+                    <img
+                      src={`data:image/png;base64,${plan.image}`}
+                      className="card-img-top"
+                      alt={plan.name}
+                      style={{ height: "200px", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        height: "200px",
+                        backgroundColor: "#f8f9fa",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "14px",
+                        color: "#888",
+                      }}
+                    >
+                      No Image Available
+                    </div>
+                  )}
+
                   <div className="card-body">
                     <h5 className="card-title">{plan.name}</h5>
                     <h6 className="card-text badge bg-info">{plan.duration}</h6>

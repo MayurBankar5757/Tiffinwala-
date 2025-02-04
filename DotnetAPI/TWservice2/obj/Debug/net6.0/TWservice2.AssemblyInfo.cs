@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TWservice2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+998e9648f5325ad80bed2832c18786ee96ebf2ca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+97c93378b13afe86ed2f7387796317f1a8edfe6d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TWservice2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TWservice2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

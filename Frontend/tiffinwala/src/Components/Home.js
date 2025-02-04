@@ -15,12 +15,18 @@ export default function Home() {
       })
       .then((data) => {
         setPlans(data);
+        console.log("Fetched subscription plans:", data);
       })
       .catch((error) => {
         console.error("Error fetching subscription plans:", error);
         setError("Failed to fetch subscription plans.");
       });
   }, []);
+
+  // Debugging: Logs whenever `plans` updates
+  useEffect(() => {
+    console.log("Updated plans:", plans);
+  }, [plans]);
 
   return (
     <div>
@@ -31,19 +37,37 @@ export default function Home() {
           {plans.map((plan, index) => (
             <div className="col-md-4 mb-4" key={index}>
               <div className="card shadow-sm h-100">
-                <img
-                  src={plan.image}
-                  className="card-img-top"
-                  alt={plan.name}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
+                {/* ✅ Ensure Base64 Image is Rendered Correctly */}
+                {plan.image ? (
+                  <img
+                    src={`data:image/png;base64,${plan.image}`}
+                    className="card-img-top"
+                    alt={plan.name}
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      height: "200px",
+                      backgroundColor: "#f8f9fa",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "14px",
+                      color: "#888",
+                    }}
+                  >
+                    No Image Available
+                  </div>
+                )}
+
                 <div className="card-body">
                   <h5 className="card-title">{plan.name}</h5>
                   <p className="card-text">{plan.description}</p>
                   <p className="card-text">
                     <strong>Price:</strong> ₹{plan.price}
                   </p>
-                  {/* Badge and Button in the Same Line */}
+                  {/* ✅ Status Badge & Button in Same Line */}
                   <div className="d-flex justify-content-between align-items-center">
                     <span className={`badge ${plan.isAvailable ? "bg-success" : "bg-danger"}`}>
                       {plan.isAvailable ? "Available" : "Not Available"}
