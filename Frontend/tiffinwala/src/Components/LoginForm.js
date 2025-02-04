@@ -34,7 +34,7 @@ export default function Home() {
             body: JSON.stringify(info),
         };
 
-        fetch("http://localhost:8081/api/users/chkLogin", reqOptions)
+        fetch("http://localhost:8102/api/users/chkLogin", reqOptions)
             .then(resp => {
                 if (resp.ok) {
                     return resp.text();

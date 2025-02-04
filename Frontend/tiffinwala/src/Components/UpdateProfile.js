@@ -38,7 +38,7 @@ function UpdateUserForm() {
 
     // Fetch the existing user data when the component mounts
     useEffect(() => {
-        fetch(`http://localhost:8081/api/users/${uid}`)
+        fetch(`http://localhost:8102/api/users/${uid}`)
             .then((response) => response.json())
             .then((data) => {
                 setFormData({
@@ -131,7 +131,7 @@ function UpdateUserForm() {
 
         if (Object.values(errors).every((error) => error === "")) {
             console.log("submitted : ", formData)
-            fetch(`http://localhost:8081/api/users/${uid}`, {
+            fetch(`http://localhost:8102/api/users/${uid}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

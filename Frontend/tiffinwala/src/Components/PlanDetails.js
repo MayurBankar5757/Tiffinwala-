@@ -9,7 +9,7 @@ export default function PlanDetails() {
     const [error, setError] = useState("");
   
     useEffect(() => {
-      fetch(`http://localhost:8081/api/vendor-subscription-plans/getSubscriptionPlanById/${id}`)
+      fetch(`http://localhost:8102/api/vendor-subscription-plans/getSubscriptionPlanById/${id}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

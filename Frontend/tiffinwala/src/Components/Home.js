@@ -6,7 +6,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8081/api/vendor-subscription-plans/getAllSubcriptionPlan")
+    fetch("http://localhost:8102/api/vendor-subscription-plans/getAllSubcriptionPlan")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

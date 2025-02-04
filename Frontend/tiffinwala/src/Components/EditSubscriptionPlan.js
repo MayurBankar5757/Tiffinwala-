@@ -28,7 +28,7 @@ const EditSubscription = () => {
           return;
         }
 
-        const vendorResponse = await fetch(`http://localhost:8081/api/vendors/vendor/${loggedUser}`);
+        const vendorResponse = await fetch(`http://localhost:8102/api/vendors/vendor/${loggedUser}`);
         if (!vendorResponse.ok) {
           alert("Not Authorized");
           navigate("/login");
@@ -38,7 +38,7 @@ const EditSubscription = () => {
         const vendorData = await vendorResponse.json();
         setVendor(vendorData);
 
-        const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${id}`);
+        const planResponse = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${id}`);
         if (!planResponse.ok) {
           alert("Plan not found");
           navigate("/vendor_home");
@@ -54,7 +54,7 @@ const EditSubscription = () => {
           duration: planData.duration,
         });
 
-        const tiffinsResponse = await fetch(`http://localhost:8081/api/tiffins/plan/${id}`);
+        const tiffinsResponse = await fetch(`http://localhost:8102/api/tiffins/plan/${id}`);
         if (!tiffinsResponse.ok) {
           alert("Failed to fetch tiffins");
           return;
@@ -133,7 +133,7 @@ const EditSubscription = () => {
         formData.append("image", subPlanImage);
       }
       
-      const planResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/update/${id}`, {
+      const planResponse = await fetch(`http://localhost:8102/api/vendor-subscription-plans/update/${id}`, {
         method: "PUT",
         body: formData,
       });
@@ -153,7 +153,7 @@ const EditSubscription = () => {
           description: tiffin.description,
         };
 
-        const tiffinResponse = await fetch(`http://localhost:8081/api/tiffins/${dayMeal}`, {
+        const tiffinResponse = await fetch(`http://localhost:8102/api/tiffins/${dayMeal}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(tiffinBody),

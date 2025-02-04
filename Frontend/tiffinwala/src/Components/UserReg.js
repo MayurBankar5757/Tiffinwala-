@@ -116,7 +116,7 @@ function UserVendorForm() {
     Object.keys(formData).forEach((key) => validate(key, formData[key]));
 
     if (Object.values(errors).every((error) => error === "")) {
-      fetch("http://localhost:8081/api/vendors/RegUser", {
+      fetch("http://localhost:8102/api/vendors/RegUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

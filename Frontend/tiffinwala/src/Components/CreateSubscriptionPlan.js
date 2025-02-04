@@ -37,7 +37,7 @@ const AddSubscription = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:8081/api/vendors/vendor/${loggedUser}`);
+        const response = await fetch(`http://localhost:8102/api/vendors/vendor/${loggedUser}`);
         if (!response.ok) {
           alert("Not Authorized");
           navigate("/login");
@@ -108,7 +108,7 @@ const AddSubscription = () => {
         formData.append("image", subPlanImage);
       }
       
-      const planResponse = await fetch("http://localhost:8081/api/vendor-subscription-plans/create", {
+      const planResponse = await fetch("http://localhost:8102/api/vendor-subscription-plans/create", {
         method: "POST",
         body: formData,
       });
@@ -131,7 +131,7 @@ const AddSubscription = () => {
           description: tiffin.description,
         };
 
-        const tiffinResponse = await fetch("http://localhost:8081/api/tiffins/createtiffin", {
+        const tiffinResponse = await fetch("http://localhost:8102/api/tiffins/createtiffin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(tiffinBody),

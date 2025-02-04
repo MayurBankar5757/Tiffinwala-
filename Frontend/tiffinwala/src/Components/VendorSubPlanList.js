@@ -24,7 +24,7 @@ export default function VendorSubPlanList() {
                 }
 
                 // Fetch vendor details
-                const vendorResponse = await fetch(`http://localhost:8081/api/vendors/vendor/${userId}`);
+                const vendorResponse = await fetch(`http://localhost:8102/api/vendors/vendor/${userId}`);
                 if (!vendorResponse.ok) {
                     throw new Error("Failed to fetch vendor details.");
                 }
@@ -43,7 +43,7 @@ export default function VendorSubPlanList() {
                 setVendorId(parsedVendorId);
 
                 // Fetch subscription plans using the vendor ID
-                const plansResponse = await fetch(`http://localhost:8081/api/vendor-subscription-plans/vendor/${parsedVendorId}`);
+                const plansResponse = await fetch(`http://localhost:8102/api/vendor-subscription-plans/vendor/${parsedVendorId}`);
                 if (!plansResponse.ok) {
                     throw new Error("Failed to fetch subscription plans.");
                 }
@@ -62,7 +62,7 @@ export default function VendorSubPlanList() {
 
     const enablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/enabled`, {
+            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}/enabled`, {
                 method: "PUT",
             });
             if (!response.ok) {
@@ -76,7 +76,7 @@ export default function VendorSubPlanList() {
 
     const disablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}/disabled`, {
+            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}/disabled`, {
                 method: "PUT",
             });
             if (!response.ok) {
@@ -90,7 +90,7 @@ export default function VendorSubPlanList() {
 
     const deletePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/vendor-subscription-plans/${planId}`, {
+            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

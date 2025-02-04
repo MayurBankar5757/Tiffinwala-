@@ -8,7 +8,7 @@ export default function VendorHome() {
   useEffect(() => {
     const loginid = JSON.parse(localStorage.getItem("loggedUser")).uid;
 
-    fetch("http://localhost:8081/api/vendors/vendor/" + loginid)
+    fetch("http://localhost:8102/api/vendors/vendor/" + loginid)
       .then((resp) => resp.json())
       .then((obj) => {
         localStorage.setItem("loggedVendor", JSON.stringify(obj));

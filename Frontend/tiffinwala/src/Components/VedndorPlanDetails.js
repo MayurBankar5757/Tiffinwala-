@@ -10,7 +10,7 @@ export default function VendorPlanDetails() {
 
     // Fetch the plan details
     useEffect(() => {
-        fetch(`http://localhost:8081/api/vendor-subscription-plans/${id}`)
+        fetch(`http://localhost:8102/api/vendor-subscription-plans/${id}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -26,7 +26,7 @@ export default function VendorPlanDetails() {
             });
 
         // Fetch tiffins related to the plan
-        fetch(`http://localhost:8081/api/tiffins/plan/${id}`)
+        fetch(`http://localhost:8102/api/tiffins/plan/${id}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -60,7 +60,7 @@ export default function VendorPlanDetails() {
             subscriptionPlanId: id, // Use the plan ID from the URL
         };
 
-        fetch("http://localhost:8081/api/subscriptions/subscribePlan", {
+        fetch("http://localhost:8102/api/subscriptions/subscribePlan", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
