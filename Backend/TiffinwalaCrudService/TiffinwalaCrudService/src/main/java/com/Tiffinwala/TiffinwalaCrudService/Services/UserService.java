@@ -23,14 +23,7 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
-    
-    // Create a new user
-    public User createUser(User user) {
-        Role role = roleRepository.findById(user.getRole().getRoleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + user.getRole().getRoleId()));
-        user.setRole(role);
-        return userRepository.save(user);
-    }
+  
 
     // Get a user by ID
     public User getUserById(Integer uid) {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,9 @@ public class TiffinController {
     }
 
     // Create a new tiffin
+    
     @PostMapping("/createtiffin")
+    @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Tiffin> addTiffin(@RequestBody TiffinDummy dummy) {
         try {
             Tiffin tiffin = tiffinService.addTiffin(dummy);
@@ -48,6 +51,7 @@ public class TiffinController {
 
     // Get all tiffins by subscription plan ID
     @GetMapping("/plan/{planId}")
+    @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<List<TiffinDTO>> getTiffinsByPlanId(@PathVariable("planId") Integer planId) {
         try {
             List<TiffinDTO> tiffins = tiffinService.getTiffinsByPlanId(planId);
@@ -59,6 +63,7 @@ public class TiffinController {
 
     // Get a tiffin by ID
     @GetMapping("/{tiffinId}")
+    @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<Tiffin> getTiffinById(@PathVariable Integer tiffinId) {
         try {
             Tiffin tiffin = tiffinService.getTiffinById(tiffinId);
@@ -70,6 +75,7 @@ public class TiffinController {
 
     // Update a tiffin
     @PutMapping("/{tiffinId}")
+    @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Tiffin> updateTiffin(@PathVariable Integer tiffinId, @RequestBody TiffinDummy dummy) {
         try {
             dummy.setV_sub_Id(tiffinId);
@@ -82,6 +88,7 @@ public class TiffinController {
 
     // Delete a tiffin
     @DeleteMapping("/{tiffinId}")
+    @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Void> deleteTiffin(@PathVariable Integer tiffinId) {
         try {
             tiffinService.deleteTiffin(tiffinId);

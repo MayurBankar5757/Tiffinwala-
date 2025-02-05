@@ -1,21 +1,20 @@
-package com.Tiffinwala.TiffinwalaAuthService.Security;
+package com.Tiffinwala.TiffinwalaCrudService.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class JwtUtil {
 
     @Value("${jwt.secret}")
@@ -57,17 +56,8 @@ public class JwtUtil {
     }
 
     // Validate the token
-    public boolean validateToken(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public boolean validateToken(String token) {
+        return extractAllClaims(token) != null;
     }
 
     // Generate token for the user
@@ -81,8 +71,8 @@ public class JwtUtil {
                 .claim("roles", userDetails.getAuthorities().stream()
                         .map(grantedAuthority -> grantedAuthority.getAuthority()) // Extract role names
                         .collect(Collectors.toList())) // Ensure this is a List<String>
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                .setIssuedAt(new java.util.Date())
+                .setExpiration(new java.util.Date(System.currentTimeMillis() + jwtExpirationInMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Signing with the key
                 .compact();
     }
