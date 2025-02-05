@@ -1,21 +1,21 @@
 package com.Tiffinwala.TiffinwalaAuthService.Services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import com.Tiffinwala.TiffinwalaAuthService.Entities.Vendor;
 import com.Tiffinwala.TiffinwalaAuthService.Entities.User;
 import com.Tiffinwala.TiffinwalaAuthService.Entities.Role;
+import com.Tiffinwala.TiffinwalaAuthService.Dummy.RegDummy;
 import com.Tiffinwala.TiffinwalaAuthService.Entities.Address;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ConflictException;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ResourceNotFoundException;
 import com.Tiffinwala.TiffinwalaAuthService.Repository.UserRepository;
 import com.Tiffinwala.TiffinwalaAuthService.Repository.VendorRepository;
-import com.Tiffinwala.TiffiwalaAuthService.Dummy.RegDummy;
 
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -32,7 +32,7 @@ public class VendorService {
     private RoleServices roleServices;
 
     @Autowired
-    private JwtService jwtService;
+    private PasswordEncoder passwordEncoder; // Add PasswordEncoder
 
     // Get all vendors
     public List<Vendor> getAllVendors() {
@@ -49,13 +49,15 @@ public class VendorService {
 
     // Save a new user and associated vendor if applicable
     @Transactional
-    public String saveUser(RegDummy r) {
+    public void saveUser(RegDummy r) {
         try {
+        	
+        	System.out.println("In registration method");
             User user = new User();
             user.setFname(r.getFname());
             user.setLname(r.getLname());
             user.setEmail(r.getEmail());
-            user.setPassword(r.getPassword());
+            user.setPassword(passwordEncoder.encode(r.getPassword())); // Encode password
             user.setContact(r.getContact());
 
             Address address = new Address(r.getCity(), r.getState(), r.getPincode(), r.getArea());
@@ -77,8 +79,6 @@ public class VendorService {
                 vendor.setUser(user);
                 vendorRepository.save(vendor);
             }
-            
-            return jwtService.generateToken(user.getEmail()); // Generate JWT token
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Data integrity violation: Duplicate entry for email or contact.");
         }

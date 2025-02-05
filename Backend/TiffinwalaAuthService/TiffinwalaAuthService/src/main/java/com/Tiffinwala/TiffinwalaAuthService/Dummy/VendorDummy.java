@@ -1,4 +1,4 @@
-package com.Tiffinwala.TiffiwalaAuthService.Dummy;
+package com.Tiffinwala.TiffinwalaAuthService.Dummy;
 
 public class VendorDummy {
 

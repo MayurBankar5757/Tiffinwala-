@@ -6,22 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
+import com.Tiffinwala.TiffinwalaAuthService.Dummy.LoginCheck;
+import com.Tiffinwala.TiffinwalaAuthService.Dummy.UserDummy;
 import com.Tiffinwala.TiffinwalaAuthService.Entities.User;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ResourceNotFoundException;
+import com.Tiffinwala.TiffinwalaAuthService.Security.JwtUtil;
+import com.Tiffinwala.TiffinwalaAuthService.Security.CustomUserDetailsService;
 import com.Tiffinwala.TiffinwalaAuthService.Services.UserService;
-import com.Tiffinwala.TiffiwalaAuthService.Dummy.LoginCheck;
-import com.Tiffinwala.TiffiwalaAuthService.Dummy.UserDummy;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,15 +28,30 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     // Login endpoint
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginCheck login) {
         try {
-            String token = userService.getLogin(login.getEmail(), login.getPwd());
-            return new ResponseEntity<>(token, HttpStatus.OK);
-        } catch (Exception e) {
+        	System.out.println("Inside login");
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPwd())
+            );
+
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(login.getEmail());
+            final String jwt = jwtUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
     }
@@ -49,18 +62,16 @@ public class UserController {
         try {
             User user = userService.getUserById(uid);
             return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to retrieve user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     // Get all customers for admin
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") 
     @GetMapping("/getAllCustomers")
     public ResponseEntity<?> getAllCustomers() {
         try {
+        	System.out.println("GetAllCustomers");
             List<User> users = userService.getAllCustomers();
             return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (Exception e) {
@@ -96,5 +107,18 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+}
+
+// Authentication Response Class
+class AuthenticationResponse {
+    private final String jwt;
+
+    public AuthenticationResponse(String jwt) {
+        this.jwt = jwt;
+    }
+
+    public String getJwt() {
+        return jwt;
     }
 }

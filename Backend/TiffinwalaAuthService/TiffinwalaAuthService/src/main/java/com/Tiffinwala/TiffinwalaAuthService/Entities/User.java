@@ -1,12 +1,12 @@
 package com.Tiffinwala.TiffinwalaAuthService.Entities;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
 @Entity
 @Table(name = "User")
 public class User {
@@ -26,14 +26,13 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "Rid")
-  
     private Role role;
-
 
     @Embedded
     private Address address;
 
-    @Column(nullable = false, length = 30)
+    @JsonIgnore
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(nullable = false, length = 20)
