@@ -6,43 +6,26 @@ import lombok.Data;
 import java.time.LocalDate;
 @Data
 @Entity
-@Table(name = "Feedback")
+@Table(name = "feedback")
 public class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer feedbackId;
+    private Long feedbackId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Uid", nullable = false)
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "uid", referencedColumnName = "user_id") // Assuming 'user_id' is the primary key of the 'User' table
+    private User user; // Reference to the User entity
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Customer_plan_id", nullable = false)
-    private CustomerSubscribedPlans customerSubscribedPlan;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id", referencedColumnName = "vendor_id")
+    private Vendor vendor; // Reference to the Vendor entity
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "V_Subscription_id", nullable = false)
-    private VendorSubscriptionPlan vendorSubscriptionPlan;
-
-    @Column(name = "Feedback_Text", nullable = false, length = 500)
     private String feedbackText;
-
-    @Column(nullable = false)
-    private Integer rating;
-
-
-
-    // Constructors
-    public Feedback() {}
-
-    public Feedback(User user, CustomerSubscribedPlans customerPlan, VendorSubscriptionPlan vendorSubscriptionPlan, String feedbackText, Integer rating, LocalDate feedbackDate) {
-        this.user = user;
-        this.customerSubscribedPlan = customerPlan;
-        this.vendorSubscriptionPlan = vendorSubscriptionPlan;
-        this.feedbackText = feedbackText;
-        this.rating = rating;
-    }
-
     
+    private int rating;
+    
+    private LocalDate feedbackDate;
+
+    // Getters and Setters
 }

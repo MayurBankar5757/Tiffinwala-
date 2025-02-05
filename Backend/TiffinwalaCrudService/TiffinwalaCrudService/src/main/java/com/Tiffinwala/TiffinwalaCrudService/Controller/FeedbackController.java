@@ -1,19 +1,17 @@
 package com.Tiffinwala.TiffinwalaCrudService.Controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.Tiffinwala.TiffinwalaCrudService.Dummy.FeedbackDto;
 import com.Tiffinwala.TiffinwalaCrudService.Entities.Feedback;
 import com.Tiffinwala.TiffinwalaCrudService.Services.FeedbackService;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/feedback")
@@ -22,37 +20,61 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
+    // Create or update feedback
     @PostMapping
-    public ResponseEntity<Feedback> addFeedback(@RequestBody Feedback feedback) {
+    public ResponseEntity<Feedback> saveFeedback(@RequestBody FeedbackDto feedback) {
         Feedback savedFeedback = feedbackService.saveFeedback(feedback);
-        return ResponseEntity.ok(savedFeedback);
+        return new ResponseEntity<>(savedFeedback, HttpStatus.CREATED);
     }
 
+    // Get feedback by ID
     @GetMapping("/{feedbackId}")
     public ResponseEntity<Feedback> getFeedbackById(@PathVariable Integer feedbackId) {
-        return feedbackService.getFeedbackById(feedbackId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Feedback> feedback = feedbackService.getFeedbackById(feedbackId);
+        return feedback.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<Feedback>> getAllFeedbacks() {
-        return ResponseEntity.ok(feedbackService.getAllFeedbacks());
+    // Get feedbacks by vendor ID
+    @GetMapping("/vendor/{vendorId}")
+    public ResponseEntity<List<Feedback>> getFeedbacksByVendorId(@PathVariable Integer vendorId) {
+        List<Feedback> feedbacks = feedbackService.getFeedbacksByVendorId(vendorId);
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
 
-    @GetMapping("/vendor/{planId}")
-    public ResponseEntity<List<Feedback>> getFeedbacksByVendorSubscriptionPlan(@PathVariable Integer planId) {
-        return ResponseEntity.ok(feedbackService.getFeedbacksByVendorSubscriptionPlan(planId));
+    // Get feedbacks by user ID
+    @GetMapping("/user/{uid}")
+    public ResponseEntity<List<Feedback>> getFeedbacksByUid(@PathVariable Integer uid) {
+        List<Feedback> feedbacks = feedbackService.getFeedbacksByUid(uid);
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Feedback>> getFeedbacksByUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(feedbackService.getFeedbacksByUser(userId));
-    }
-
+    // Delete feedback by ID
     @DeleteMapping("/{feedbackId}")
-    public ResponseEntity<String> deleteFeedback(@PathVariable Integer feedbackId) {
+    public ResponseEntity<Void> deleteFeedback(@PathVariable Integer feedbackId) {
         feedbackService.deleteFeedback(feedbackId);
-        return ResponseEntity.ok("Feedback deleted successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    // Update feedback by ID
+    @PutMapping("/{feedbackId}")
+    public ResponseEntity<Feedback> updateFeedback(@PathVariable Integer feedbackId, @RequestBody FeedbackDto feedbackDetails ) {
+        Feedback updatedFeedback = feedbackService.updateFeedback(feedbackId, feedbackDetails);
+        return new ResponseEntity<>(updatedFeedback, HttpStatus.OK);
+    }
+    
+    // filter on >3
+    @GetMapping("/high-ratings")
+    public ResponseEntity<List<Feedback>> getFeedbacksWithHighRating() {
+        List<Feedback> feedbacks = feedbackService.getFeedbacksWithHighRating();
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    }
+    
+    // filter on high to low
+    @GetMapping("/high-ratings-sorted")
+    public ResponseEntity<List<Feedback>> getFeedbacksWithHighRatingSorted() {
+        List<Feedback> feedbacks = feedbackService.getFeedbacksWithHighRatingSorted();
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    }
+    
+    
 }

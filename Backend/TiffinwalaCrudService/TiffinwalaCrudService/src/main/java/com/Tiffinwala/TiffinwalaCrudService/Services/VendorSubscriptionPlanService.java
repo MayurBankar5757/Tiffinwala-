@@ -97,4 +97,18 @@ public class VendorSubscriptionPlanService {
         return vendorSubscriptionPlanRepository.findByIsAvailableFalse();
     }
     
+    
+    // filters
+   
+
+        public List<VendorSubscriptionPlan> getSubscriptionPlansByPriceRange(double minPrice, double maxPrice) {
+            return vendorSubscriptionPlanRepository.findByPriceBetween(minPrice, maxPrice);
+        }
+
+        public List<VendorSubscriptionPlan> getSubscriptionPlansAbovePrice(double minPrice) {
+            return vendorSubscriptionPlanRepository.findByPriceGreaterThan(minPrice);
+        }
+    
+
+    
 }

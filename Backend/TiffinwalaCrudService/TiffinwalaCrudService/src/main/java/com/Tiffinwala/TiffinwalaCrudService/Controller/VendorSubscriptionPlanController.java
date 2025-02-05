@@ -101,4 +101,30 @@ public class VendorSubscriptionPlanController {
         List<VendorSubscriptionPlan> disabledPlans = vendorSubscriptionPlanService.getDisabledSubscriptionPlans();
         return new ResponseEntity<>(disabledPlans, HttpStatus.OK);
     }
+    
+    // filters
+    
+   
+
+        @GetMapping("/filter/0-1000")
+        public ResponseEntity<List<VendorSubscriptionPlan>> getPlansInRange0To1000() {
+            List<VendorSubscriptionPlan> plans = vendorSubscriptionPlanService.getSubscriptionPlansByPriceRange(0, 1000);
+            return new ResponseEntity<>(plans, HttpStatus.OK);
+        }
+
+        @GetMapping("/filter/1000-5000")
+        public ResponseEntity<List<VendorSubscriptionPlan>> getPlansInRange1000To5000() {
+            List<VendorSubscriptionPlan> plans = vendorSubscriptionPlanService.getSubscriptionPlansByPriceRange(1000, 5000);
+            return new ResponseEntity<>(plans, HttpStatus.OK);
+        }
+
+        @GetMapping("/filter/5000+")
+        public ResponseEntity<List<VendorSubscriptionPlan>> getPlansAbove5000() {
+            List<VendorSubscriptionPlan> plans = vendorSubscriptionPlanService.getSubscriptionPlansAbovePrice(5000);
+            return new ResponseEntity<>(plans, HttpStatus.OK);
+        }
+    
+
+    
+    
 }
