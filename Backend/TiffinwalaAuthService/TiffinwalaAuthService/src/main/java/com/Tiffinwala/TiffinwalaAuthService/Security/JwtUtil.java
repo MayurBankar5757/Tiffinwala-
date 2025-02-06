@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.Tiffinwala.TiffinwalaAuthService.Entities.User;
+
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -72,18 +74,31 @@ public class JwtUtil {
 
     // Generate token for the user
     public String generateToken(UserDetails userDetails) {
-        return createToken(userDetails);
+        // Cast to CustomUserDetails since we know the implementation is CustomUserDetails
+        if (userDetails instanceof CustomUserDetails) {
+            return createToken((CustomUserDetails) userDetails);  // Cast to CustomUserDetails and pass it
+        }
+        throw new IllegalArgumentException("Invalid UserDetails object");
     }
 
-    private String createToken(UserDetails userDetails) {
+
+    private String createToken(CustomUserDetails customUserDetails) {
+        User userDetails = customUserDetails.getUser();  // Access the user object directly from CustomUserDetails
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
-                        .map(grantedAuthority -> grantedAuthority.getAuthority()) // Extract role names
-                        .collect(Collectors.toList())) // Ensure this is a List<String>
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Signing with the key
-                .compact();
+                .setSubject(userDetails.getEmail()) // Subject is the email
+                .claim("roles", customUserDetails.getAuthorities().stream() // Keep the roles as they are in the token
+                        .map(grantedAuthority -> grantedAuthority.getAuthority())
+                        .collect(Collectors.toList())) 
+                .claim("uid", userDetails.getUid()) // User ID
+                .claim("fname", userDetails.getFname()) // First name
+                .claim("lname", userDetails.getLname()) // Last name
+                .claim("contact", userDetails.getContact()) // Contact number
+                .claim("address", userDetails.getAddress()) // Address object
+                .setIssuedAt(new Date()) // Issue date
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs)) // Set expiration time
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Signing the JWT with the secret key
+                .compact(); // Create and return the JWT token
     }
+
 }

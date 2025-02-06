@@ -48,4 +48,8 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true; // Implement logic based on your requirements (e.g., user verification)
     }
+    
+    public User getUser() {
+        return user;
+    }
 }

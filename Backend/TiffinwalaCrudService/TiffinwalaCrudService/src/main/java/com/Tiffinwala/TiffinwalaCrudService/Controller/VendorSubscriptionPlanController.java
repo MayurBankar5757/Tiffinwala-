@@ -59,7 +59,6 @@ public class VendorSubscriptionPlanController {
 
     // Get All Subscription Plans (Accessible by ADMIN or VENDOR)
     @GetMapping("/getAllSubcriptionPlan")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'VENDOR')")
     public ResponseEntity<List<VendorSubscriptionPlan>> getAllSubscriptionPlans() {
         return ResponseEntity.ok(vendorSubscriptionPlanService.getAllSubscriptionPlans());
     }
