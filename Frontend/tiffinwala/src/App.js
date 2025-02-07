@@ -20,7 +20,6 @@ import EditSubscription from './Components/EditSubscriptionPlan';
 import UpdateUserForm from './Components/UpdateProfile';
 import PlanDetails from './Components/PlanDetails';
 
-import UpdateCustomerForm from './Components/CustomerProfileUpdate';
 import EnabledPlans from './Components/EnabledPlans';
 import DisabledPlans from './Components/DisabledPlans';
 function App() {
@@ -54,7 +53,6 @@ function App() {
           <Route path="/showSubscribedCustomers/:id" element={<ShowSubscribedCustomers />} />
           <Route path='/editSubscriptionPlan/:id' element={<EditSubscription/>}/>
           <Route path= '/updateUser' element={<UpdateUserForm/>}/>
-          <Route path='/UpdateCustomerProfile' element = {<UpdateCustomerForm/>}/>
           <Route path = '/enabledPlans' element = {<EnabledPlans/>}/>
           <Route path = '/disabledPlans' element = {<DisabledPlans/>}/>
 
