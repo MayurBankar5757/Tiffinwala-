@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddSubscription = () => {
+const AddSubscriptionPlan = () => {
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [subPlan, setSubPlan] = useState({
@@ -10,8 +10,9 @@ const AddSubscription = () => {
     description: "",
     price: "",
     duration: "",
+    isAvaliable: true
   });
-  
+
   const [tiffins, setTiffins] = useState(() => {
     const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
     const mealTypes = ["LUNCH"];
@@ -31,13 +32,19 @@ const AddSubscription = () => {
     const fetchVendor = async () => {
       try {
         const loggedUser = JSON.parse(localStorage.getItem("loggedUser"))?.uid;
+        const token = localStorage.getItem("jwtToken");
         if (!loggedUser) {
           alert("Not Authorized");
           navigate("/login");
           return;
         }
 
-        const response = await fetch(`http://localhost:8102/api/vendors/vendor/${loggedUser}`);
+        const response = await fetch(`http://localhost:8103/api/vendors/vendor/${loggedUser}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (!response.ok) {
           alert("Not Authorized");
           navigate("/login");
@@ -103,13 +110,18 @@ const AddSubscription = () => {
       formData.append("description", subPlan.description);
       formData.append("price", subPlan.price);
       formData.append("duration", subPlan.duration);
-      formData.append("isAvaliable", true);
+      formData.append("isAvaliable", subPlan.isAvaliable);
       if (subPlanImage) {
         formData.append("image", subPlanImage);
       }
-      
-      const planResponse = await fetch("http://localhost:8102/api/vendor-subscription-plans/create", {
+
+      const token = localStorage.getItem("jwtToken");
+
+      const planResponse = await fetch("http://localhost:8103/api/vendor-subscription-plans/create", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: formData,
       });
       if (!planResponse.ok) {
@@ -117,23 +129,26 @@ const AddSubscription = () => {
         alert(errorData.message || "Failed to create subscription plan");
         return;
       }
-      
+
       const planData = await planResponse.json();
-      const planId = planData.planId;
+      const planId = parseInt(planData.planId, 10); // Ensure the planId is an integer
 
       for (const [dayMeal, tiffin] of Object.entries(tiffins)) {
         const [day, meal] = dayMeal.split("_");
         const tiffinBody = {
-          v_sub_Id: planId,
+          planId: planId,
           day: `${day}_${meal}`,
           name: tiffin.name,
           foodType: tiffin.foodType,
           description: tiffin.description,
         };
 
-        const tiffinResponse = await fetch("http://localhost:8102/api/tiffins/createtiffin", {
+        const tiffinResponse = await fetch("http://localhost:8103/api/tiffins/createtiffin", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
           body: JSON.stringify(tiffinBody),
         });
 
@@ -169,7 +184,14 @@ const AddSubscription = () => {
             <label className="form-check-label" htmlFor="includeDinner">Include Dinner</label>
           </div>
           <table className="table">
-            <thead><tr><th>Day & Meal</th><th>Name</th><th>Description</th><th>Food Type</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Day & Meal</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Food Type</th>
+              </tr>
+            </thead>
             <tbody>
               {Object.entries(tiffins).map(([dayMeal, tiffin]) => (
                 <tr key={dayMeal}>
@@ -179,7 +201,7 @@ const AddSubscription = () => {
                   <td><input type="text" name="foodType" className="form-control" value={tiffin.foodType} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                 </tr>
               ))}
-            </tbody>
+              </tbody>
           </table>
           <button type="submit" className="btn btn-primary">Submit</button>
         </form>
@@ -188,4 +210,5 @@ const AddSubscription = () => {
   );
 };
 
-export default AddSubscription;
+export default AddSubscriptionPlan;
+

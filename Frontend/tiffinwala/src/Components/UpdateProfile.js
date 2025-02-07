@@ -27,7 +27,7 @@ function UpdateUserForm() {
   const [pwdVisible, setPwdVisible] = useState(false);
 
   useEffect(() => {
-    if (!loggedUser || !jwtToken) {
+    if (!loggedUser || !jwtToken || !uid) {
       navigate("/login");
       return;
     }
@@ -44,19 +44,19 @@ function UpdateUserForm() {
 
         const data = await response.json();
         setFormData({
-          fname: data.fname,
-          lname: data.lname,
-          email: data.email,
-          roleId: data.role?.roleId || "",
+          fname: data.fname || "",
+          lname: data.lname || "",
+          email: data.email || "",
+          roleId: String(data.role?.roleId || ""),
           area: data.address?.area || "",
           city: data.address?.city || "",
-          pincode: data.address?.pincode || "",
+          pincode: String(data.address?.pincode || ""),
           state: data.address?.state || "",
-          password: data.password,
-          contact: data.contact,
+          password: data.password || "",
+          contact: String(data.contact || ""),
           isVendor: data.role?.roleId === 2,
-          foodLicenceNo: "",
-          adhar_no: "",
+          foodLicenceNo: data.foodLicenceNo || "",
+          adhar_no: data.adhar_no || "",
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -68,36 +68,37 @@ function UpdateUserForm() {
 
   const validate = (name, value) => {
     let message = "";
+    const stringValue = value ? String(value).trim() : "";
     switch (name) {
       case "fname":
       case "lname":
-        if (!value.trim()) message = `${name === "fname" ? "First" : "Last"} name is required.`;
+        if (!stringValue) message = `${name === "fname" ? "First" : "Last"} name is required.`;
         break;
       case "email":
-        if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value))
+        if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(stringValue))
           message = "Invalid email address.";
         break;
       case "password":
-        if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(value))
+        if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(stringValue))
           message = "Password must be 8+ characters, include a number & special character.";
         break;
       case "contact":
-        if (!/^\d{10}$/.test(value)) message = "Contact number must be 10 digits.";
+        if (!/^\d{10}$/.test(stringValue)) message = "Contact number must be 10 digits.";
         break;
       case "pincode":
-        if (!/^\d{6}$/.test(value)) message = "Pincode must be 6 digits.";
+        if (!/^\d{6}$/.test(stringValue)) message = "Pincode must be 6 digits.";
         break;
       case "area":
       case "city":
       case "state":
       case "roleId":
-        if (!value.trim()) message = `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
+        if (!stringValue) message = `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
         break;
       default:
         break;
     }
-
     setErrors((prev) => ({ ...prev, [name]: message }));
+    return message === "";
   };
 
   const handleChange = (e) => {
@@ -109,10 +110,9 @@ function UpdateUserForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate all fields before submission
-    Object.keys(formData).forEach((key) => validate(key, formData[key]));
+    const allValid = Object.keys(formData).every((key) => validate(key, formData[key]));
 
-    if (Object.values(errors).some((msg) => msg !== "")) {
+    if (!allValid) {
       alert("Please correct the errors before submitting.");
       return;
     }
@@ -162,14 +162,11 @@ function UpdateUserForm() {
                     {errors[field] && <small className="text-danger">{errors[field]}</small>}
                   </div>
                 ))}
-
-                {/* Password Visibility Toggle */}
                 <div className="mb-3">
                   <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setPwdVisible(!pwdVisible)}>
                     {pwdVisible ? "Hide Password" : "Show Password"}
                   </button>
                 </div>
-
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary btn-sm">Update</button>
                 </div>
