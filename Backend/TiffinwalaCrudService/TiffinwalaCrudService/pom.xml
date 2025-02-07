@@ -77,7 +77,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        
+<!-- For Spring Boot users (already included in spring-boot-starter-web) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
 
+<!-- For non-Spring Boot users -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.5</version>
+</dependency>
         <!-- Database Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

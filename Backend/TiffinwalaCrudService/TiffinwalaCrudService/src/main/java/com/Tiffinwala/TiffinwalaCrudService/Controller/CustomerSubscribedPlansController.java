@@ -55,8 +55,8 @@ public class CustomerSubscribedPlansController {
 
     @GetMapping("/planid/{planId}")
     @PreAuthorize("hasAuthority('CUSTOMER','VENDOR')") // access in by vendor id
-    public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionBySubscriptionId(@PathVariable Integer vendorId) {
-        List<CustomerSubscribedPlans> subscriptions = customerSubscribedPlansService.getSubscriptionPlansByVendorId(vendorId);
+    public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionBySubcriptionId(@PathVariable Integer planId) {
+        List<CustomerSubscribedPlans> subscriptions = customerSubscribedPlansService.getSubscriptionPlansByVendorId(planId);
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 

@@ -1,16 +1,27 @@
 package com.Tiffinwala.TiffinwalaCrudService.Controller;
 
+import java.awt.PageAttributes.MediaType;
 import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.Tiffinwala.TiffinwalaCrudService.Dummy.VendorSubscriptionPlanDTO;
 import com.Tiffinwala.TiffinwalaCrudService.Entities.VendorSubscriptionPlan;
+import com.Tiffinwala.TiffinwalaCrudService.Enum.SubscriptionDuration;
 import com.Tiffinwala.TiffinwalaCrudService.Services.VendorSubscriptionPlanService;
 
 @RestController
@@ -21,12 +32,38 @@ public class VendorSubscriptionPlanController {
     @Autowired
     private VendorSubscriptionPlanService vendorSubscriptionPlanService;
 
-    // Create Subscription Plan (Now Open to All)
-    @PostMapping("/create")
+
     public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(@RequestBody VendorSubscriptionPlanDTO dto) {
         VendorSubscriptionPlan newPlan = vendorSubscriptionPlanService.createSubscriptionPlan(dto);
         return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     }
+    
+    @PostMapping(
+    	    value = "/create",
+    	    consumes = "multipart/form-data" // Use string directly if still having issues
+    	)
+    	public ResponseEntity<VendorSubscriptionPlan> createSubscriptionPlan(
+    	        @RequestParam("vendorId") Integer vendorId,
+    	        @RequestParam("name") String name,
+    	        @RequestParam("price") Integer price,
+    	        @RequestParam("description") String description,
+    	        @RequestParam("isAvaliable") boolean isAvaliable,
+    	        @RequestParam("duration") SubscriptionDuration duration,
+    	        @RequestParam(value = "image", required = false) MultipartFile image) {
+    	    
+    	    // Your existing implementation
+    	    VendorSubscriptionPlanDTO dto = new VendorSubscriptionPlanDTO();
+    	    dto.setVendorId(vendorId);
+    	    dto.setName(name);
+    	    dto.setPrice(price);
+    	    dto.setDescription(description);
+    	    dto.setAvaliable(isAvaliable);
+    	    dto.setDuration(duration);
+    	    dto.setImage(image);
+
+    	    VendorSubscriptionPlan newPlan = vendorSubscriptionPlanService.createSubscriptionPlan(dto);
+    	    return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
+    	}
 
     // Upload Image for a Subscription Plan (Now Open to All)
     @PostMapping(value = "/uploadImage/{vid}", consumes = "multipart/form-data")

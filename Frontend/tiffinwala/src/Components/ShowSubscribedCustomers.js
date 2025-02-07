@@ -4,10 +4,16 @@ import { useParams } from 'react-router-dom';
 export default function ShowSubscribedCustomers() {
     const { id } = useParams(); // Retrieve 'id' from URL params
     const [subscribedCustomers, setSubscribedCustomers] = useState([]);
-
+    const jwtToken = localStorage.getItem("jwtToken");
+    console.log(subscribedCustomers);
     useEffect(() => {
         // Fetch data based on the 'id' (planid) from the URL
-        fetch(`http://localhost:8102/api/subscriptions/planid/${id}`)
+        fetch(`http://localhost:8103/api/subscriptions/planid/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+              },
+            })
             .then(response => response.json())
             .then(data => setSubscribedCustomers(data))
             .catch(error => console.error('Error fetching data:', error));
