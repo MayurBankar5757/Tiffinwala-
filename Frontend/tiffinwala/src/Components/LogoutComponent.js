@@ -9,6 +9,5 @@ export default function LogoutComp(){
     // Clear localStorage and dispatch logout action
     localStorage.clear();
     dispatch(logout());
-    
     navigate("/Login");
 }

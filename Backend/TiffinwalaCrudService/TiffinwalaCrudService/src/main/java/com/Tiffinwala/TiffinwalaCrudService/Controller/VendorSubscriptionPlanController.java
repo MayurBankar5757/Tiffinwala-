@@ -47,6 +47,7 @@ public class VendorSubscriptionPlanController {
     @GetMapping("/{planId}")
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'VENDOR')")
     public ResponseEntity<VendorSubscriptionPlan> getSubscriptionPlanById(@PathVariable Integer planId) {
+    	System.out.println("getSubscriptionPlanById hit");
         return ResponseEntity.ok(vendorSubscriptionPlanService.getSubscriptionPlanById(planId));
     }
 
@@ -60,6 +61,8 @@ public class VendorSubscriptionPlanController {
     // Get All Subscription Plans (Accessible by ADMIN or VENDOR)
     @GetMapping("/getAllSubcriptionPlan")
     public ResponseEntity<List<VendorSubscriptionPlan>> getAllSubscriptionPlans() {
+    	System.out.println("getAllSubscriptionPlans hit");
+
         return ResponseEntity.ok(vendorSubscriptionPlanService.getAllSubscriptionPlans());
     }
 

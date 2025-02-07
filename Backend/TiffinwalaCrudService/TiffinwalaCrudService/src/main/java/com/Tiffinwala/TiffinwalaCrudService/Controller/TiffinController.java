@@ -2,6 +2,7 @@ package com.Tiffinwala.TiffinwalaCrudService.Controller;
 
 import java.util.List;
 
+import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ import com.Tiffinwala.TiffinwalaCrudService.Entities.Tiffin;
 import com.Tiffinwala.TiffinwalaCrudService.Exceptions.ConflictException;
 import com.Tiffinwala.TiffinwalaCrudService.Exceptions.ResourceNotFoundException;
 import com.Tiffinwala.TiffinwalaCrudService.Services.TiffinService;
+
+import ch.qos.logback.classic.Logger;
 
 @RestController
 @RequestMapping("/api/tiffins")
@@ -53,6 +56,8 @@ public class TiffinController {
     @GetMapping("/plan/{planId}")
     @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<List<TiffinDTO>> getTiffinsByPlanId(@PathVariable("planId") Integer planId) {
+    	System.out.println("getTiffinsByPlanId hit");
+
         try {
             List<TiffinDTO> tiffins = tiffinService.getTiffinsByPlanId(planId);
             return new ResponseEntity<>(tiffins, HttpStatus.OK);

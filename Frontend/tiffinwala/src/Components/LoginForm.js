@@ -2,6 +2,8 @@ import React, { useReducer, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login } from './slice';
+import { jwtDecode } from 'jwt-decode';
+import { combineSlices } from '@reduxjs/toolkit';
 
 export default function Home() {
     const init = {
@@ -26,6 +28,15 @@ export default function Home() {
     const navigate = useNavigate();
     const reducerAction = useDispatch();
 
+    const decodeJWT = (token) => {
+        try {
+            return jwtDecode(token);
+        } catch (error) {
+            console.error("Failed to decode JWT:", error);
+            return null;
+        }
+    };
+
     const sendData = (e) => {
         e.preventDefault();
         const reqOptions = {
@@ -34,31 +45,60 @@ export default function Home() {
             body: JSON.stringify(info),
         };
 
-        fetch("http://localhost:8102/api/users/login", reqOptions)
+        fetch("http://localhost:8102/api/users/auth/login", reqOptions)
             .then(resp => {
-                if (resp.ok) {
-                    return resp.text();
-                } else {
-                    throw new Error("Server error");
-                }
+                if (resp.ok) return resp.json();
+                throw new Error("Server error");
             })
-            .then(text => (text.length ? JSON.parse(text) : {}))
-            .then(obj => {
-                if (Object.keys(obj).length === 0) {
-                    setMsg("Wrong user ID or Password");
-                } else {
-                    reducerAction(login(obj));
-                    localStorage.setItem("loggedUser", JSON.stringify(obj));
-                    if (obj.role.roleId === 1) {
-                        navigate("/admin_home");
-                    } else if (obj.role.roleId === 2) {
-                        navigate("/vendor_home");
-                    } else if (obj.role.roleId === 3) {
-                        navigate("/customer_home");
+            .then(data => {
+                if (data.jwt) {
+                    const decodedToken = decodeJWT(data.jwt);
+                    if (!decodedToken) {
+                        setMsg("Invalid token format");
+                        return;
                     }
+
+                    // Create user object with all required fields
+                    const loggedUser = {
+                        email: decodedToken.sub,
+                        role: decodedToken.roles[0].toLowerCase(), // Convert role to lowercase
+                        uid: decodedToken.uid,
+                        fname: decodedToken.fname,
+                        lname: decodedToken.lname,
+                        contact: decodedToken.contact,
+                        address: decodedToken.address,
+                        token: data.jwt,
+                    };
+
+                    // Update Redux state
+                    reducerAction(login(loggedUser));
+
+                    // Store in localStorage
+                    localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
+                    localStorage.setItem("jwtToken", data.jwt);
+
+                    // Navigate based on role
+                    switch (loggedUser.role) {
+                        case 'admin':
+                            navigate("/admin_home");
+                            break;
+                        case 'vendor':
+                            navigate("/vendor_home");
+                            break;
+                        case 'customer':
+                            navigate("/customer_home");
+                            break;
+                        default:
+                            setMsg("Unauthorized access role");
+                    }
+                } else {
+                    setMsg("Invalid credentials");
                 }
             })
-            .catch(error => alert("Server error. Try after some time"));
+            .catch(error => {
+                console.error("Login error:", error);
+                setMsg("Server error. Please try again later.");
+            });
     };
 
     return (
@@ -68,7 +108,7 @@ export default function Home() {
                     <div className="card shadow">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Login</h2>
-                            <form onSubmit={sendData}>
+                            <form onSubmit={sendData} method="POST"> {/* Ensure method is POST */}
                                 <div className="form-group mb-3">
                                     <label htmlFor="email">Email Address</label>
                                     <input

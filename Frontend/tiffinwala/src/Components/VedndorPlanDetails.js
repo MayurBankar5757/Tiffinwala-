@@ -2,91 +2,109 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 export default function VendorPlanDetails() {
-  const { id } = useParams(); // Get the plan ID from the URL
+  const { id } = useParams();
   const [plan, setPlan] = useState(null);
-  const [tiffins, setTiffins] = useState([]); // To store tiffin details
+  const [tiffins, setTiffins] = useState([]);
   const [error, setError] = useState("");
-  const [userInfo, setUserInfo] = useState(null); // Store user info
+  const [userInfo, setUserInfo] = useState(null);
+  const jwtToken = localStorage.getItem("jwtToken");
 
-  // Fetch the plan details
   useEffect(() => {
-    fetch(`http://localhost:8102/api/vendor-subscription-plans/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setPlan(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching subscription plan details:", error);
-        setError("Failed to fetch plan details.");
-      });
-
-    // Fetch tiffins related to the plan
-    fetch(`http://localhost:8102/api/tiffins/plan/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setTiffins(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching tiffins:", error);
-        setError("Failed to fetch tiffins.");
-      });
-
-    // Fetch user info from localStorage
-    const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
-    if (storedUser) {
-      setUserInfo(storedUser); // Set user info if available
+    console.log("JWT Token:", jwtToken); // Verify token existence
+    
+    if (!jwtToken) {
+      setError("Unauthorized access. Please log in.");
+      return;
     }
-  }, [id]); // Re-run when `id` changes
 
-  // Debugging: Logs whenever `plan` or `tiffins` updates
-  useEffect(() => {
-    console.log("Updated plan:", plan);
-    console.log("Updated tiffins:", tiffins);
-  }, [plan, tiffins]);
+    const fetchData = async () => {
+      try {
+        // Fetch plan details
+        const planResponse = await fetch(
+          `http://localhost:8103/api/vendor-subscription-plans/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
 
-  // Function to handle subscription
-  const handleSubscribe = () => {
+        if (!planResponse.ok) {
+          const errorData = await planResponse.json();
+          throw new Error(errorData.message || "Failed to fetch plan details");
+        }
+
+        const planData = await planResponse.json();
+        console.log("Plan details:", planData);
+        setPlan(planData);
+
+        // Fetch tiffins
+        const tiffinsResponse = await fetch(
+          `http://localhost:8103/api/tiffins/plan/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
+
+        if (!tiffinsResponse.ok) {
+          const errorData = await tiffinsResponse.json();
+          throw new Error(errorData.message || "Failed to fetch tiffins");
+        }
+
+        const tiffinsData = await tiffinsResponse.json();
+        console.log("Tiffins data:", tiffinsData);
+        setTiffins(tiffinsData);
+
+        // Set user info
+        const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
+        setUserInfo(storedUser);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setError(error.message);
+      }
+    };
+
+    fetchData();
+  }, [id, jwtToken]);
+
+  const handleSubscribe = async () => {
     if (!userInfo) {
       alert("Please log in to subscribe.");
       return;
     }
 
-    const subscriptionData = {
-      userId: userInfo.uid, // Assuming the user object has a userId field
-      subscriptionPlanId: id, // Use the plan ID from the URL
-    };
+    try {
+      const subscriptionData = {
+        userId: userInfo.uid, // Use uid from Postman response
+        subscriptionPlanId: id,
+      };
 
-    fetch("http://localhost:8102/api/subscriptions/subscribePlan", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(subscriptionData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+      const response = await fetch(
+        "http://localhost:8103/api/subscriptions/subscribePlan",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(subscriptionData),
         }
-        return response.json();
-      })
-      .then((data) => {
-        alert("Subscription successful!");
-        console.log("Subscription response:", data);
-      })
-      .catch((error) => {
-        console.error("Error subscribing to plan:", error);
-        alert("Failed to subscribe. Please try again.");
-      });
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Subscription failed");
+      }
+
+      const data = await response.json();
+      alert("Subscription successful!");
+      console.log("Subscription details:", data);
+    } catch (error) {
+      console.error("Subscription error:", error);
+      alert(error.message);
+    }
   };
 
   if (error) {
@@ -106,30 +124,28 @@ export default function VendorPlanDetails() {
               <h2 className="text-center mb-4 display-4 font-weight-bold text-primary">
                 {plan.name}
               </h2>
+              
+              {/* Fixed Image Rendering */}
               <div className="text-center mb-4">
                 {plan.image ? (
                   <img
-                    src={`data:image/png;base64,${plan.image}`}
+                    src={
+                      plan.image.startsWith("data:image")
+                        ? plan.image
+                        : `data:image/jpeg;base64,${plan.image}`
+                    }
                     className="img-fluid rounded-4"
                     alt={plan.name}
                     style={{ maxHeight: "400px", objectFit: "cover" }}
                   />
                 ) : (
-                  <div
-                    className="d-flex align-items-center justify-content-center"
-                    style={{
-                      height: "400px",
-                      backgroundColor: "#f8f9fa",
-                      borderRadius: "10px",
-                      fontSize: "1.2rem",
-                      color: "#888",
-                    }}
-                  >
+                  <div className="no-image-placeholder">
                     No Image Available
                   </div>
                 )}
               </div>
 
+              {/* Plan Details */}
               <div className="mt-4 text-center">
                 <h5 className="text-muted mb-3">{plan.duration}</h5>
                 <p className="lead">{plan.description}</p>
@@ -138,16 +154,13 @@ export default function VendorPlanDetails() {
                   <span className="text-success">₹{plan.price}</span>
                 </p>
                 <span
-                  className={`badge ${
-                    plan.isAvailable ? "bg-success" : "bg-danger"
-                  } p-3 mt-2`}
-                  style={{ fontSize: "1.2rem" }}
+                  className={`badge ${plan.isAvailable ? "bg-success" : "bg-danger"} p-3 mt-2`}
                 >
                   {plan.isAvailable ? "Available" : "Not Available"}
                 </span>
               </div>
 
-              {/* Subscribe Button */}
+              {/* Subscription Button */}
               <div className="text-center mt-5">
                 <button
                   className="btn btn-success btn-lg px-5 py-3"
@@ -167,7 +180,7 @@ export default function VendorPlanDetails() {
               {/* Tiffins Section */}
               <div className="mt-6">
                 <h3 className="text-center mb-5 display-5 font-weight-bold text-primary">
-                  Tiffins Included in this Plan
+                  Tiffins Included
                 </h3>
                 <div className="row">
                   {tiffins.map((tiffin) => (
@@ -187,13 +200,15 @@ export default function VendorPlanDetails() {
                             </span>
                           </p>
                           <p className="card-text">
-                            <strong>Description: </strong>
                             {tiffin.description || "No description available."}
                           </p>
                         </div>
                       </div>
                     </div>
                   ))}
+                  {tiffins.length === 0 && (
+                    <p className="text-center text-muted">No tiffins available</p>
+                  )}
                 </div>
               </div>
             </div>

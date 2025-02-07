@@ -18,6 +18,7 @@ import ShowSubscribedCustomers from './Components/ShowSubscribedCustomers';
 import AddSubscription from './Components/CreateSubscriptionPlan';
 import EditSubscription from './Components/EditSubscriptionPlan';
 import UpdateUserForm from './Components/UpdateProfile';
+import PlanDetails from './Components/PlanDetails';
 
 import UpdateCustomerForm from './Components/CustomerProfileUpdate';
 function App() {
