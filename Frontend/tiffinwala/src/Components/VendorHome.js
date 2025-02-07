@@ -1,48 +1,99 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Make sure useNavigate is imported
+import { useNavigate } from "react-router-dom";
 
 export default function VendorHome() {
-  const navigate = useNavigate(); // Define navigate
+  const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
 
   useEffect(() => {
-    const loginid = JSON.parse(localStorage.getItem("loggedUser")).uid;
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (!loggedUser) {
+      navigate("/"); // Redirect to login if no user is logged in
+      return;
+    }
 
-    fetch("http://localhost:8102/api/vendors/vendor/" + loginid)
-      .then((resp) => resp.json())
+    const loginid = loggedUser.uid;
+    const token = localStorage.getItem("jwtToken"); // Fetch token
+
+    if (!token) {
+      console.error("No token found in localStorage");
+      navigate("/"); // Redirect to login
+      return;
+    }
+
+    fetch(`http://localhost:8103/api/vendors/vendor/${loginid}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((resp) => {
+        if (!resp.ok) throw new Error("Failed to fetch vendor data");
+        return resp.json();
+      })
       .then((obj) => {
         localStorage.setItem("loggedVendor", JSON.stringify(obj));
         setVendor(obj);
-        console.log(vendor)
+      })
+      .catch((error) => {
+        console.error("Error fetching vendor data:", error);
       });
   }, []);
 
   return (
     <div>
       {/* Welcome Section */}
-      <div style={{ paddingTop: "60px", fontFamily: "Arial, sans-serif", textAlign: "center", backgroundColor: "#f8f9fa", padding: "30px 0" }}>
+      <div
+        style={{
+          paddingTop: "60px",
+          fontFamily: "Arial, sans-serif",
+          textAlign: "center",
+          backgroundColor: "#f8f9fa",
+          padding: "30px 0",
+        }}
+      >
         <div className="container mt-4">
           <h1 className="text-primary fw-bold">
-            Welcome {vendor && vendor.user.fname} {vendor && vendor.user.lname}
+            Welcome {vendor?.user?.fname} {vendor?.user?.lname}
           </h1>
 
           {/* Vendor Details Section */}
           {vendor && (
             <div className="alert alert-info mt-4 p-4 shadow-sm rounded">
               <h2 className="text-secondary">Vendor Details</h2>
-              <p><strong>Vendor ID:</strong> {vendor.vendorId}</p>
-              <p><strong>Is Verified:</strong> {vendor.isVerified ? "✅ Yes" : "❌ No"}</p>
+              <p>
+                <strong>Vendor ID:</strong> {vendor.vendorId}
+              </p>
+              <p>
+                <strong>Is Verified:</strong>{" "}
+                {vendor.isVerified ? "✅ Yes" : "❌ No"}
+              </p>
 
               <h3 className="mt-4 text-secondary">User Details</h3>
-              <p><strong>Name:</strong> {vendor.user.fname} {vendor.user.lname}</p>
-              <p><strong>Email:</strong> {vendor.user.email}</p>
-              <p><strong>Contact:</strong> {vendor.user.contact}</p>
+              <p>
+                <strong>Name:</strong> {vendor.user.fname} {vendor.user.lname}
+              </p>
+              <p>
+                <strong>Email:</strong> {vendor.user.email}
+              </p>
+              <p>
+                <strong>Contact:</strong> {vendor.user.contact}
+              </p>
 
               <h3 className="mt-4 text-secondary">Address</h3>
-              <p><strong>City:</strong> {vendor.user.address.city}</p>
-              <p><strong>State:</strong> {vendor.user.address.state}</p>
-              <p><strong>Area:</strong> {vendor.user.address.area}</p>
-              <p><strong>Pincode:</strong> {vendor.user.address.pincode}</p>
+              <p>
+                <strong>City:</strong> {vendor.user.address.city}
+              </p>
+              <p>
+                <strong>State:</strong> {vendor.user.address.state}
+              </p>
+              <p>
+                <strong>Area:</strong> {vendor.user.address.area}
+              </p>
+              <p>
+                <strong>Pincode:</strong> {vendor.user.address.pincode}
+              </p>
             </div>
           )}
         </div>
@@ -59,12 +110,12 @@ export default function VendorHome() {
             { title: "Disabled Subscription Plans", text: "Show Disabled Subscription Plans", link: "/disabledPlans" },
           ].map((item, index) => (
             <div key={index} className="col-sm-6 col-md-4">
-              <div 
-                className="card shadow-lg border-0 rounded-3 text-white bg-gradient" 
-                style={{ cursor: "pointer", backgroundColor: "#007bff" }} 
+              <div
+                className="card shadow-lg border-0 rounded-3 text-white bg-gradient"
+                style={{ cursor: "pointer", backgroundColor: "#007bff" }}
                 onClick={() => navigate(item.link)}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0056b3"}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#007bff"}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
               >
                 <div className="card-body p-4">
                   <h5 className="card-title fw-bold">{item.title}</h5>
@@ -77,5 +128,4 @@ export default function VendorHome() {
       </div>
     </div>
   );
-
 }

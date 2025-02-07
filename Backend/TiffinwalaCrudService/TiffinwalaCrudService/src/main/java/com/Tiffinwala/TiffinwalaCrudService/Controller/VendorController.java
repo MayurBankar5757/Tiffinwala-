@@ -64,7 +64,7 @@ public class VendorController {
     }
     
     @GetMapping("/vendor/{uid}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')") 
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER','VENDOR')") 
     public ResponseEntity<Vendor> getVendorByUserUid(@PathVariable Integer uid) {
         Vendor vendor = vendorService.getVendorByUserId(uid);
         if (vendor != null) {

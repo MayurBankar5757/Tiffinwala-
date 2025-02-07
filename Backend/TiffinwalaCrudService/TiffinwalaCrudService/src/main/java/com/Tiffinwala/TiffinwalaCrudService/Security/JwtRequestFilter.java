@@ -29,12 +29,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
+        System.out.println("The token is "+ authorizationHeader);
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        	
             String token = authorizationHeader.substring(7);
+            
             String username = jwtUtil.extractUsername(token);
-            List<String> roles = jwtUtil.extractRoles(token);  // Extract roles
-
+            List<String> roles = jwtUtil.extractRoles(token);  // Extract role
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
