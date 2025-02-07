@@ -7,7 +7,6 @@ export default function VendorSubPlanList() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [vendorId, setVendorId] = useState(null);
-    const jwtToken = localStorage.getItem("jwtToken");
 
     useEffect(() => {
         const fetchVendorAndPlans = async () => {
@@ -26,21 +25,12 @@ export default function VendorSubPlanList() {
                 }
 
                 // Fetch vendor details
-<<<<<<< HEAD
                 const vendorResponse = await fetch(`http://localhost:8103/api/vendors/vendor/${userId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     }
                 });
-=======
-                const vendorResponse = await fetch(`http://localhost:8103/api/vendors/vendor/${userId}`,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                      },
-                    });
->>>>>>> 5442279960cf01443ad474b2f1d35b61d7fa1427
                 if (!vendorResponse.ok) {
                     throw new Error("Failed to fetch vendor details.");
                 }
@@ -59,21 +49,12 @@ export default function VendorSubPlanList() {
                 setVendorId(parsedVendorId);
 
                 // Fetch subscription plans using the vendor ID
-<<<<<<< HEAD
                 const plansResponse = await fetch(`http://localhost:8103/api/vendor-subscription-plans/vendor/${parsedVendorId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     }
                 });
-=======
-                const plansResponse = await fetch(`http://localhost:8103/api/vendor-subscription-plans/vendor/${parsedVendorId}`,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                      },
-                    });
->>>>>>> 5442279960cf01443ad474b2f1d35b61d7fa1427
                 if (!plansResponse.ok) {
                     throw new Error("Failed to fetch subscription plans.");
                 }
@@ -92,7 +73,6 @@ export default function VendorSubPlanList() {
 
     const enablePlan = async (planId) => {
         try {
-<<<<<<< HEAD
             const token = localStorage.getItem("jwtToken");
 
             const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/enabled`, {
@@ -100,14 +80,6 @@ export default function VendorSubPlanList() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-=======
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/enabled`, {
-                method: "PUT",
-                
-                headers: {
-                    Authorization: `Bearer ${jwtToken}`,
-                  },
->>>>>>> 5442279960cf01443ad474b2f1d35b61d7fa1427
             });
             if (!response.ok) {
                 throw new Error("Failed to enable subscription plan.");
@@ -120,7 +92,6 @@ export default function VendorSubPlanList() {
 
     const disablePlan = async (planId) => {
         try {
-<<<<<<< HEAD
             const token = localStorage.getItem("jwtToken");
 
             const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/disabled`, {
@@ -128,14 +99,6 @@ export default function VendorSubPlanList() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-=======
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/disabled`, {
-                method: "PUT",
-                
-                headers: {
-                    Authorization: `Bearer ${jwtToken}`,
-                  },
->>>>>>> 5442279960cf01443ad474b2f1d35b61d7fa1427
             });
             if (!response.ok) {
                 throw new Error("Failed to disable subscription plan.");
@@ -148,7 +111,6 @@ export default function VendorSubPlanList() {
 
     const deletePlan = async (planId) => {
         try {
-<<<<<<< HEAD
             const token = localStorage.getItem("jwtToken");
 
             const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}`, {
@@ -156,14 +118,6 @@ export default function VendorSubPlanList() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-=======
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}`, {
-                method: "DELETE",
-                
-                headers: {
-                    Authorization: `Bearer ${jwtToken}`,
-                  },
->>>>>>> 5442279960cf01443ad474b2f1d35b61d7fa1427
             });
             if (!response.ok) {
                 throw new Error("Failed to delete subscription plan.");

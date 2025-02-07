@@ -1,97 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function UpdateUserForm() {
+const initialState = {
+  fname: "",
+  lname: "",
+  contact: "",
+  area: "",
+  city: "",
+  pincode: "",
+  state: "",
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "update":
+      return { ...state, [action.field]: action.value };
+    case "reset":
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default function UpdateUserForm() {
   const navigate = useNavigate();
   const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
   const uid = loggedUser?.uid;
   const jwtToken = localStorage.getItem("jwtToken");
-
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    roleId: "",
-    area: "",
-    city: "",
-    pincode: "",
-    state: "",
-    password: "",
-    contact: "",
-    isVendor: false,
-    foodLicenceNo: "",
-    adhar_no: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [pwdVisible, setPwdVisible] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [errors, setErrors] = React.useState({});
+  const [msg, setMsg] = React.useState("");
 
   useEffect(() => {
     if (!loggedUser || !jwtToken || !uid) {
       navigate("/login");
-      return;
     }
-
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:8103/api/users/${uid}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setFormData({
-          fname: data.fname || "",
-          lname: data.lname || "",
-          email: data.email || "",
-          roleId: String(data.role?.roleId || ""),
-          area: data.address?.area || "",
-          city: data.address?.city || "",
-          pincode: String(data.address?.pincode || ""),
-          state: data.address?.state || "",
-          password: data.password || "",
-          contact: String(data.contact || ""),
-          isVendor: data.role?.roleId === 2,
-          foodLicenceNo: data.foodLicenceNo || "",
-          adhar_no: data.adhar_no || "",
-        });
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
   }, [uid, jwtToken, loggedUser, navigate]);
 
   const validate = (name, value) => {
     let message = "";
     const stringValue = value ? String(value).trim() : "";
+
     switch (name) {
       case "fname":
       case "lname":
         if (!stringValue) message = `${name === "fname" ? "First" : "Last"} name is required.`;
         break;
-      case "email":
-        if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(stringValue))
-          message = "Invalid email address.";
-        break;
-      case "password":
-        if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(stringValue))
-          message = "Password must be 8+ characters, include a number & special character.";
-        break;
       case "contact":
-        if (!/^\d{10}$/.test(stringValue)) message = "Contact number must be 10 digits.";
+        if (!/^[0-9]{10}$/.test(stringValue)) message = "Contact number must be 10 digits.";
         break;
       case "pincode":
-        if (!/^\d{6}$/.test(stringValue)) message = "Pincode must be 6 digits.";
+        if (!/^[0-9]{6}$/.test(stringValue)) message = "Pincode must be 6 digits.";
         break;
       case "area":
       case "city":
       case "state":
-      case "roleId":
         if (!stringValue) message = `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
         break;
       default:
@@ -103,14 +66,13 @@ function UpdateUserForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    dispatch({ type: "update", field: name, value });
     validate(name, value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const allValid = Object.keys(formData).every((key) => validate(key, formData[key]));
+    const allValid = Object.keys(state).every((key) => validate(key, state[key]));
 
     if (!allValid) {
       alert("Please correct the errors before submitting.");
@@ -124,18 +86,18 @@ function UpdateUserForm() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwtToken}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(state),
       });
 
       if (!response.ok) {
         throw new Error(`Update failed: ${response.status}`);
       }
 
-      alert("User updated successfully!");
-      navigate("/vendor_home");
+      setMsg("User updated successfully!");
+      setTimeout(() => navigate("/vendor_home"), 500);
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Error updating user.");
+      setMsg("Error updating user.");
     }
   };
 
@@ -147,30 +109,29 @@ function UpdateUserForm() {
             <div className="card-body">
               <h2 className="text-center mb-4">Update User</h2>
               <form onSubmit={handleSubmit}>
-                {["fname", "lname", "email", "password", "contact", "area", "city", "pincode", "state"].map((field) => (
+                {Object.keys(initialState).map((field) => (
                   <div className="mb-3" key={field}>
-                    <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+                    <label className="form-label">
+                      {field.charAt(0).toUpperCase() + field.slice(1)}:
+                    </label>
                     <input
-                      type={field === "password" && !pwdVisible ? "password" : "text"}
+                      type="text"
                       name={field}
                       className="form-control form-control-sm"
-                      value={formData[field]}
+                      value={state[field]}
                       onChange={handleChange}
-                      readOnly={field === "email"}
-                      style={field === "email" ? { backgroundColor: "#f7f7f7", color: "#6c757d" } : {}}
                     />
                     {errors[field] && <small className="text-danger">{errors[field]}</small>}
                   </div>
                 ))}
-                <div className="mb-3">
-                  <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setPwdVisible(!pwdVisible)}>
-                    {pwdVisible ? "Hide Password" : "Show Password"}
-                  </button>
-                </div>
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary btn-sm">Update</button>
                 </div>
               </form>
+              <div className="d-grid mt-2">
+                <button className="btn btn-secondary btn-sm" onClick={() => dispatch({ type: "reset" })}>Clear Form</button>
+              </div>
+              <p className="mt-3 text-center text-success">{msg}</p>
             </div>
           </div>
         </div>
@@ -178,5 +139,3 @@ function UpdateUserForm() {
     </div>
   );
 }
-
-export default UpdateUserForm;
