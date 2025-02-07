@@ -109,6 +109,12 @@ public class VendorSubscriptionPlanService {
             return vendorSubscriptionPlanRepository.findByPriceGreaterThan(minPrice);
         }
     
-
+        public List<VendorSubscriptionPlan> getEnabledPlansByVendorId(Integer vendorId) {
+            return vendorSubscriptionPlanRepository.findEnabledPlansByVendorId(vendorId);
+        }
+        
+        public List<VendorSubscriptionPlan> getDisabledPlansByVendorId(Integer vendorId) {
+            return vendorSubscriptionPlanRepository.findDisabledPlansByVendorId(vendorId);
+        }
     
 }

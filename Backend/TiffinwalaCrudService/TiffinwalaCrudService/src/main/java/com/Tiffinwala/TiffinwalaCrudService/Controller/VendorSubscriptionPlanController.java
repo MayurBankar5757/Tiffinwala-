@@ -111,4 +111,24 @@ public class VendorSubscriptionPlanController {
         List<VendorSubscriptionPlan> plans = vendorSubscriptionPlanService.getSubscriptionPlansAbovePrice(5000);
         return new ResponseEntity<>(plans, HttpStatus.OK);
     }
+    
+    @GetMapping("/vendor/{vendorId}/enabled")
+    public ResponseEntity<List<VendorSubscriptionPlan>> getEnabledPlansByVendorId(@PathVariable Integer vendorId) {
+        List<VendorSubscriptionPlan> enabledPlans = vendorSubscriptionPlanService.getEnabledPlansByVendorId(vendorId);
+        if(enabledPlans.isEmpty()) {
+        	return new ResponseEntity<>(enabledPlans, HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(enabledPlans, HttpStatus.OK);
+    }
+    @GetMapping("/vendor/{vendorId}/disabled")
+    public ResponseEntity<List<VendorSubscriptionPlan>> getDisabledPlansByVendorId(@PathVariable Integer vendorId) {
+        List<VendorSubscriptionPlan> disabledPlans = vendorSubscriptionPlanService.getDisabledPlansByVendorId(vendorId);
+        if (disabledPlans.isEmpty()) {
+        	System.out.println("In Empty block");
+            return new ResponseEntity<>(disabledPlans,HttpStatus.NO_CONTENT);
+        }
+    	System.out.println("In Outside block");
+
+        return new ResponseEntity<>(disabledPlans, HttpStatus.OK);
+    }
 }
