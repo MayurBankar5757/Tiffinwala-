@@ -13,6 +13,7 @@ export default function CustomerHome() {
   const plansPerPage = 6; // Change this for different page sizes
   const navigate = useNavigate();
 
+  console.log(plans);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
     const jwtToken = localStorage.getItem("jwtToken");

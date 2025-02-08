@@ -155,7 +155,7 @@ console.log(formData)
                     type="text"
                     name="fname"
                     className="form-control form-control-sm"
-                    value={formData.fname}
+                    value={formData.fname.trim()}
                     onChange={handleChange}
                   />
                   {errors.fname && <small className="text-danger">{errors.fname}</small>}
@@ -168,7 +168,7 @@ console.log(formData)
                     type="text"
                     name="lname"
                     className="form-control form-control-sm"
-                    value={formData.lname}
+                    value={formData.lname.trim()}
                     onChange={handleChange}
                   />
                   {errors.lname && <small className="text-danger">{errors.lname}</small>}
@@ -195,7 +195,7 @@ console.log(formData)
                       type={pwdVisible ? "text" : "password"}
                       name="password"
                       className="form-control"
-                      value={formData.password}
+                      value={formData.password.trim()}
                       onChange={handleChange}
                     />
                     <button
@@ -216,7 +216,7 @@ console.log(formData)
                     type="text"
                     name="contact"
                     className="form-control form-control-sm"
-                    value={formData.contact}
+                    value={formData.contact.trim()}
                     onChange={handleChange}
                   />
                   {errors.contact && <small className="text-danger">{errors.contact}</small>}
@@ -229,7 +229,7 @@ console.log(formData)
                     type="text"
                     name="area"
                     className="form-control form-control-sm"
-                    value={formData.area}
+                    value={formData.area.trim()}
                     onChange={handleChange}
                   />
                   {errors.area && <small className="text-danger">{errors.area}</small>}
@@ -242,7 +242,7 @@ console.log(formData)
                     type="text"
                     name="city"
                     className="form-control form-control-sm"
-                    value={formData.city}
+                    value={formData.city.trim()}
                     onChange={handleChange}
                   />
                   {errors.city && <small className="text-danger">{errors.city}</small>}
@@ -255,7 +255,7 @@ console.log(formData)
                     type="text"
                     name="pincode"
                     className="form-control form-control-sm"
-                    value={formData.pincode}
+                    value={formData.pincode.trim()}
                     onChange={handleChange}
                   />
                   {errors.pincode && <small className="text-danger">{errors.pincode}</small>}
@@ -268,7 +268,7 @@ console.log(formData)
                     type="text"
                     name="state"
                     className="form-control form-control-sm"
-                    value={formData.state}
+                    value={formData.state.trim()}
                     onChange={handleChange}
                   />
                   {errors.state && <small className="text-danger">{errors.state}</small>}
@@ -299,7 +299,7 @@ console.log(formData)
                         type="text"
                         name="foodLicenceNo"
                         className="form-control form-control-sm"
-                        value={formData.foodLicenceNo}
+                        value={formData.foodLicenceNo.trim()}
                         onChange={handleChange}
                       />
                     </div>
@@ -309,7 +309,7 @@ console.log(formData)
                         type="text"
                         name="adhar_no"
                         className="form-control form-control-sm"
-                        value={formData.adhar_no}
+                        value={formData.adhar_no.trim()}
                         onChange={handleChange}
                       />
                     </div>

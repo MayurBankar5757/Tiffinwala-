@@ -48,10 +48,10 @@ export default function ShowSubscribedCustomers() {
                                 <td>{subscription.startDate} to {subscription.endDate}</td>
                                 <td>
                                     {/* Address section */}
+                                    <p><strong>Area:</strong> {subscription.user.address.area}</p>
                                     <p><strong>City:</strong> {subscription.user.address.city}</p>
                                     <p><strong>State:</strong> {subscription.user.address.state}</p>
                                     <p><strong>Pincode:</strong> {subscription.user.address.pincode}</p>
-                                    <p><strong>Area:</strong> {subscription.user.address.area}</p>
                                 </td>
                             </tr>
                         ))}

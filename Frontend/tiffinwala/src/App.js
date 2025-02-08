@@ -22,6 +22,8 @@ import PlanDetails from './Components/PlanDetails';
 
 import EnabledPlans from './Components/EnabledPlans';
 import DisabledPlans from './Components/DisabledPlans';
+import VendorMyPlanDetails from './Components/VedorPlanDetailsVendor';
+
 function App() {
   const mystate = useSelector((state) => state.logged);
   console.log(mystate);
@@ -55,6 +57,10 @@ function App() {
           <Route path= '/updateUser' element={<UpdateUserForm/>}/>
           <Route path = '/enabledPlans' element = {<EnabledPlans/>}/>
           <Route path = '/disabledPlans' element = {<DisabledPlans/>}/>
+
+          <Route path='/myplan/:id' element={<VendorMyPlanDetails/>}/>
+
+
 
         </Routes>
       </div>
