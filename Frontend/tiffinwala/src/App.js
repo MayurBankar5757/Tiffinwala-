@@ -23,6 +23,7 @@ import PlanDetails from './Components/PlanDetails';
 import EnabledPlans from './Components/EnabledPlans';
 import DisabledPlans from './Components/DisabledPlans';
 import VendorMyPlanDetails from './Components/VedorPlanDetailsVendor';
+import GetAllVendors from './Components/GetAllVendors';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
@@ -59,6 +60,10 @@ function App() {
           <Route path = '/disabledPlans' element = {<DisabledPlans/>}/>
 
           <Route path='/myplan/:id' element={<VendorMyPlanDetails/>}/>
+
+
+
+          <Route path = '/admin/vendors/all' element = {<GetAllVendors/>}/>
 
 
 
