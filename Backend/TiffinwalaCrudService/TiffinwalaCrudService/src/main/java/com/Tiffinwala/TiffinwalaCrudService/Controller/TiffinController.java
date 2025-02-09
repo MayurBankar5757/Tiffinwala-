@@ -52,6 +52,38 @@ public class TiffinController {
         }
     }
 
+// // Update a tiffin
+//    @PutMapping("/{tiffinId}")
+//    @PreAuthorize("hasAuthority('VENDOR')")
+//    public ResponseEntity<Tiffin> updateTiffin(@PathVariable Integer tiffinId, @RequestBody TiffinDummy dummy) {
+//        try {
+//            dummy.setV_sub_Id(tiffinId);
+//            Tiffin tiffin = tiffinService.updateTiffin(dummy);
+//            return new ResponseEntity<>(tiffin, HttpStatus.OK);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Unexpected error occurred while updating tiffin.");
+//        }
+//    }
+//   
+
+    @PutMapping("/updateTiffin/{tiffinId}")
+    @PreAuthorize("hasAuthority('VENDOR')")
+    public ResponseEntity<Tiffin> updateTiffin(@PathVariable("tiffinId") Integer tiffinId, 
+                                               @RequestBody TiffinDummy dummy) {
+        try {
+            Tiffin updatedTiffin = tiffinService.updateTiffin(tiffinId, dummy);
+            return ResponseEntity.ok(updatedTiffin);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage()); // Tiffin or Plan not found
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Duplicate entry detected: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error occurred while updating tiffin.");
+        }
+    }
+
+    
+    
     // Get all tiffins by subscription plan ID
     @GetMapping("/plan/{planId}")
     @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
@@ -78,18 +110,7 @@ public class TiffinController {
         }
     }
 
-    // Update a tiffin
-    @PutMapping("/{tiffinId}")
-    @PreAuthorize("hasAuthority('VENDOR')")
-    public ResponseEntity<Tiffin> updateTiffin(@PathVariable Integer tiffinId, @RequestBody TiffinDummy dummy) {
-        try {
-            dummy.setV_sub_Id(tiffinId);
-            Tiffin tiffin = tiffinService.updateTiffin(dummy);
-            return new ResponseEntity<>(tiffin, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error occurred while updating tiffin.");
-        }
-    }
+    
 
     // Delete a tiffin
     @DeleteMapping("/{tiffinId}")

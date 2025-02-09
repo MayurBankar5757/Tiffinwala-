@@ -94,7 +94,7 @@ export default function UpdateUserForm() {
       }
 
       setMsg("User updated successfully!");
-      setTimeout(() => navigate("/vendor_home"), 500);
+      setTimeout(() => navigate("/Login"), 500);
     } catch (error) {
       console.error("Error updating user:", error);
       setMsg("Error updating user.");

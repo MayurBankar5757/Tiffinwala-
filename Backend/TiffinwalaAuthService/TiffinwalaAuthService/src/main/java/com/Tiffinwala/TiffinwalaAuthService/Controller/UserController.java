@@ -17,6 +17,7 @@ import com.Tiffinwala.TiffinwalaAuthService.Dummy.UserDummy;
 import com.Tiffinwala.TiffinwalaAuthService.Entities.User;
 import com.Tiffinwala.TiffinwalaAuthService.Exceptions.ResourceNotFoundException;
 import com.Tiffinwala.TiffinwalaAuthService.Security.JwtUtil;
+import com.Tiffinwala.TiffinwalaAuthService.Security.AuthenticationResponse;
 import com.Tiffinwala.TiffinwalaAuthService.Security.CustomUserDetailsService;
 import com.Tiffinwala.TiffinwalaAuthService.Services.UserService;
 
@@ -111,14 +112,14 @@ public class UserController {
 }
 
 // Authentication Response Class
-class AuthenticationResponse {
-    private final String jwt;
-
-    public AuthenticationResponse(String jwt) {
-        this.jwt = jwt;
-    }
-
-    public String getJwt() {
-        return jwt;
-    }
-}
+//class AuthenticationResponse {
+//    private final String jwt;
+//
+//    public AuthenticationResponse(String jwt) {
+//        this.jwt = jwt;
+//    }
+//
+//    public String getJwt() {
+//        return jwt;
+//    }
+//}

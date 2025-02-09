@@ -44,6 +44,31 @@ public class TiffinService {
         }
     }
 
+    
+    //update tiffin
+    
+    public Tiffin updateTiffin(Integer tiffinId, TiffinDummy dummy) {
+        // Find the existing tiffin
+        Tiffin existingTiffin = tiffinRepository.findById(tiffinId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tiffin not found with ID: " + tiffinId));
+
+        // Find the subscription plan (only if vendorSubscriptionPlan needs to be updated)
+        VendorSubscriptionPlan subscriptionPlan = vendorSubscriptionPlanRepository.findById(dummy.getV_sub_Id())
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Subscription Plan not found"));
+
+        // Update tiffin details
+        existingTiffin.setName(dummy.getName());
+        existingTiffin.setDescription(dummy.getDescription());
+        existingTiffin.setFoodType(dummy.getFoodType());
+        existingTiffin.setDay(dummy.getDay());
+        // Save the updated tiffin
+        return tiffinRepository.save(existingTiffin);
+    }
+
+    
+    
+    
+    
     // Get all tiffins by subscription plan ID
     public List<TiffinDTO> getTiffinsByPlanId(Integer planId) {
         List<Tiffin> tiffins = tiffinRepository.findByVendorSubscriptionPlan_PlanId(planId);
@@ -59,15 +84,15 @@ public class TiffinService {
     }
 
     // Update a tiffin
-    public Tiffin updateTiffin(TiffinDummy dummy) {
-        Tiffin tiffin = getTiffinById(dummy.getV_sub_Id());
-        tiffin.setDay(dummy.getDay());
-        tiffin.setFoodType(dummy.getFoodType());
-        tiffin.setDescription(dummy.getDescription());
-        tiffin.setName(dummy.getName());
-
-        return tiffinRepository.save(tiffin);
-    }
+//    public Tiffin updateTiffin(TiffinDummy dummy) {
+//        Tiffin tiffin = getTiffinById(dummy.getV_sub_Id());
+//        tiffin.setDay(dummy.getDay());
+//        tiffin.setFoodType(dummy.getFoodType());
+//        tiffin.setDescription(dummy.getDescription());
+//        tiffin.setName(dummy.getName());
+//
+//        return tiffinRepository.save(tiffin);
+//    }
 
     // Delete a tiffin by ID
     public void deleteTiffin(Integer tiffinId) {

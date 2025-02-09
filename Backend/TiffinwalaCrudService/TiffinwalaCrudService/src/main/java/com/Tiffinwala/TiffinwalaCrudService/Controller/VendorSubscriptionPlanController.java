@@ -64,6 +64,34 @@ public class VendorSubscriptionPlanController {
     	    VendorSubscriptionPlan newPlan = vendorSubscriptionPlanService.createSubscriptionPlan(dto);
     	    return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     	}
+    
+    // update subcription plan
+    
+    @PutMapping(
+    	    value = "/update/{planId}",
+    	    consumes = "multipart/form-data"
+    	)
+    	public ResponseEntity<VendorSubscriptionPlan> updateSubscriptionPlan(
+    	        @PathVariable("planId") Integer planId,
+    	        @RequestParam("name") String name,
+    	        @RequestParam("price") Integer price,
+    	        @RequestParam("description") String description,
+    	        @RequestParam("duration") SubscriptionDuration duration,
+    	        @RequestParam(value = "image", required = false) MultipartFile image) {
+
+    	    VendorSubscriptionPlanDTO dto = new VendorSubscriptionPlanDTO();
+    	   
+    	 
+    	    dto.setName(name);
+    	    dto.setPrice(price);
+    	    dto.setDescription(description);
+    	    dto.setDuration(duration);
+    	    dto.setImage(image);
+
+    	    VendorSubscriptionPlan updatedPlan = vendorSubscriptionPlanService.updateSubscriptionPlan(dto,planId);
+    	    return new ResponseEntity<>(updatedPlan, HttpStatus.OK);
+    	}
+
 
     // Upload Image for a Subscription Plan (Now Open to All)
     @PostMapping(value = "/uploadImage/{vid}", consumes = "multipart/form-data")

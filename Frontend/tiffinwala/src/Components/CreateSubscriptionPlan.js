@@ -120,7 +120,7 @@ const AddSubscription = () => {
       if (subPlanImage) {
         formData.append("image", subPlanImage);
       }
-
+     console.log(subPlanImage)
       // First request - create subscription plan
       const planResponse = await fetch(
         "http://localhost:8103/api/vendor-subscription-plans/create",
@@ -178,7 +178,7 @@ const AddSubscription = () => {
       alert("An error occurred. Please try again.");
     }
   };
-
+console.log(subPlanImage)
   return (
     <div className="container mt-5">
       <div className="card shadow-lg p-4">
