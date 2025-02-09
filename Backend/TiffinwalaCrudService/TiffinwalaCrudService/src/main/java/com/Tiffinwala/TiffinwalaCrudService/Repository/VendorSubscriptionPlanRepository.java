@@ -29,6 +29,15 @@ public interface VendorSubscriptionPlanRepository extends JpaRepository<VendorSu
     
     List<VendorSubscriptionPlan> findByIsAvailableFalse();
     
+    @Query("SELECT v FROM VendorSubscriptionPlan v WHERE v.price BETWEEN :minPrice AND :maxPrice")
+    List<VendorSubscriptionPlan> findByPriceBetween(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
 
+    @Query("SELECT v FROM VendorSubscriptionPlan v WHERE v.price > :minPrice")
+    List<VendorSubscriptionPlan> findByPriceGreaterThan(@Param("minPrice") double minPrice);
 
+    @Query(value = "SELECT * FROM vendor_subscription_plan WHERE vendor_id = :vendorId AND is_available = true", nativeQuery = true)
+    List<VendorSubscriptionPlan> findEnabledPlansByVendorId(@Param("vendorId") Integer vendorId);
+    
+    @Query(value = "SELECT * FROM vendor_subscription_plan WHERE vendor_id = :vendorId AND is_available = false", nativeQuery = true)
+    List<VendorSubscriptionPlan> findDisabledPlansByVendorId(@Param("vendorId") Integer vendorId);
 }

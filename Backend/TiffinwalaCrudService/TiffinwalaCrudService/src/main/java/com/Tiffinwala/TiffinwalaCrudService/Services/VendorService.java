@@ -45,39 +45,7 @@ public class VendorService {
     }
 
     // Save a new user and associated vendor if applicable
-    @Transactional
-    public void saveUser(RegDummy r) {
-        try {
-            User user = new User();
-            user.setFname(r.getFname());
-            user.setLname(r.getLname());
-            user.setEmail(r.getEmail());
-            user.setPassword(r.getPassword());
-            user.setContact(r.getContact());
-
-            Address address = new Address(r.getCity(), r.getState(), r.getPincode(), r.getArea());
-            user.setAddress(address);
-
-            Role role = roleServices.getRoleById(r.getRid());
-            if (role == null) {
-                throw new ResourceNotFoundException("Invalid role ID.");
-            }
-            user.setRole(role);
-
-            userRepository.save(user);
-
-            if (r.getRid() == 2) { // Vendor
-                Vendor vendor = new Vendor();
-                vendor.setIsVerified(false);
-                vendor.setFoodLicenceNo(r.getFoodLicenceNo());
-                vendor.setAdhar_no(r.getAdhar_no());
-                vendor.setUser(user);
-                vendorRepository.save(vendor);
-            }
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Data integrity violation: Duplicate entry for email or contact.");
-        }
-    }
+   
 
     // Get all approved vendors
     public List<Vendor> getAllApprovedVendors() {

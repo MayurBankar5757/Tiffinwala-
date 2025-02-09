@@ -23,14 +23,7 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
-    
-    // Create a new user
-    public User createUser(User user) {
-        Role role = roleRepository.findById(user.getRole().getRoleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + user.getRole().getRoleId()));
-        user.setRole(role);
-        return userRepository.save(user);
-    }
+  
 
     // Get a user by ID
     public User getUserById(Integer uid) {
@@ -51,33 +44,24 @@ public class UserService {
         return userRepository.getAllCustomers(role);
     }
 
+    
     // Update user details (business logic and validation)
     public User updateUserDetails(Integer uid, UserDummy userRequest) {
-        // Validate role id
-        if (userRequest.getRoleId() == null) {
-            throw new IllegalArgumentException("Role id is required");
-        }
         
         // Fetch existing user
         User existingUser = userRepository.findById(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + uid));
         
         // If an email change is attempted, disallow it
-        if (!existingUser.getEmail().equals(userRequest.getEmail())) {
-            throw new DataIntegrityViolationException("Email cannot be updated because it is unique.");
-        }
+     
         
-        // Fetch the role using the role id from the DTO
-        Role role = roleRepository.findById(userRequest.getRoleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id " + userRequest.getRoleId()));
-        
+      
         // Update user details (email remains unchanged)
         existingUser.setFname(userRequest.getFname());
         existingUser.setLname(userRequest.getLname());
         // Do not update email: existingUser.setEmail(userRequest.getEmail());
-        existingUser.setPassword(userRequest.getPassword()); // Ensure you hash the password as needed
+     
         existingUser.setContact(userRequest.getContact());
-        existingUser.setRole(role);
         
         // Update or create address fields
         Address address = existingUser.getAddress();

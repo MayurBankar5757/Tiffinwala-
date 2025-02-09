@@ -35,9 +35,10 @@ public class User {
 
     @Embedded
     private Address address;
+    
+    @Column(name = "password", length = 255, nullable = false)
+      private String password;
 
-    @Column(nullable = false, length = 30)
-    private String password;
 
     @Column(nullable = false, length = 20)
     private String contact;

@@ -1,8 +1,6 @@
 package com.Tiffinwala.TiffinwalaCrudService.Repository;
 import com.Tiffinwala.TiffinwalaCrudService.Entities.Vendor;
 
-
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +17,8 @@ public interface VendorRepository extends JpaRepository<Vendor, Integer> {
 	    List<Vendor> findByIsVerifiedTrue(); // Fetch only approved vendors
 
 	    List<Vendor> findByIsVerifiedFalse(); // Fetch only unapproved vendors
+	    
+	   
 
 }
 

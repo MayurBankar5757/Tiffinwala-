@@ -176,7 +176,7 @@ const AddSubscription = () => {
                   <td>{dayMeal.replace("_", " ")}</td>
                   <td><input type="text" name="name" className="form-control" value={tiffin.name} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                   <td><textarea name="description" className="form-control" value={tiffin.description} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
-                  <td><input type="text" name="foodType" className="form-control" value={tiffin.foodType} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
+                  <td><input  type="text" name="foodType" className="form-control" value={tiffin.foodType} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
                 </tr>
               ))}
             </tbody>

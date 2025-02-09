@@ -1,5 +1,6 @@
 package com.Tiffinwala.TiffinwalaCrudService.Services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,15 +39,50 @@ public class VendorSubscriptionPlanService {
         subscriptionPlan.setName(dto.getName());
         subscriptionPlan.setPrice(dto.getPrice());
         subscriptionPlan.setDescription(dto.getDescription());
-        subscriptionPlan.setIsAvailable(dto.isAvaliable());
+       subscriptionPlan.setIsAvailable(false);
         subscriptionPlan.setDuration(dto.getDuration());
+        try {
+			subscriptionPlan.setImage(dto.getImage().getBytes());
+			System.out.println("Image "+dto.getImage().getBytes() );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+		}
 
+        System.out.println("subcription plan dto : "+dto);
         try {
             return vendorSubscriptionPlanRepository.save(subscriptionPlan);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Duplicate entry detected. Please ensure all fields are unique.");
         }
     }
+    
+    // update subcription plan
+    
+    public VendorSubscriptionPlan updateSubscriptionPlan(VendorSubscriptionPlanDTO dto, int planId) {
+        VendorSubscriptionPlan existingPlan = vendorSubscriptionPlanRepository.findById(planId)
+            .orElseThrow(() -> new ResourceNotFoundException("Subscription Plan not found with ID: " + planId));
+
+        existingPlan.setName(dto.getName());
+        existingPlan.setPrice(dto.getPrice());
+        existingPlan.setDescription(dto.getDescription());
+        existingPlan.setDuration(dto.getDuration());
+
+        // Only update image if a new one is provided
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                existingPlan.setImage(dto.getImage().getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("Error processing image", e);
+            }
+        }
+
+        return vendorSubscriptionPlanRepository.save(existingPlan);
+    }
+
+    
+    //get sub plan by id
 
     public VendorSubscriptionPlan getSubscriptionPlanById(Integer planId) {
         return Optional.ofNullable(vendorSubscriptionPlanRepository.findByPlanId(planId))
@@ -96,5 +132,25 @@ public class VendorSubscriptionPlanService {
     public List<VendorSubscriptionPlan> getDisabledSubscriptionPlans() {
         return vendorSubscriptionPlanRepository.findByIsAvailableFalse();
     }
+    
+    
+    // filters
+   
+
+        public List<VendorSubscriptionPlan> getSubscriptionPlansByPriceRange(double minPrice, double maxPrice) {
+            return vendorSubscriptionPlanRepository.findByPriceBetween(minPrice, maxPrice);
+        }
+
+        public List<VendorSubscriptionPlan> getSubscriptionPlansAbovePrice(double minPrice) {
+            return vendorSubscriptionPlanRepository.findByPriceGreaterThan(minPrice);
+        }
+    
+        public List<VendorSubscriptionPlan> getEnabledPlansByVendorId(Integer vendorId) {
+            return vendorSubscriptionPlanRepository.findEnabledPlansByVendorId(vendorId);
+        }
+        
+        public List<VendorSubscriptionPlan> getDisabledPlansByVendorId(Integer vendorId) {
+            return vendorSubscriptionPlanRepository.findDisabledPlansByVendorId(vendorId);
+        }
     
 }

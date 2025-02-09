@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,16 +31,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     
-    // Login endpoint
-    @PostMapping("/chkLogin")
-    public ResponseEntity<?> login(@RequestBody LoginCheck login) {
-        try {
-            User user = userService.getLogin(login.getEmail(), login.getPwd());
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
-        }
-    }
+  
 
     // Get a user by ID
     @GetMapping("/{uid}")
@@ -53,6 +45,7 @@ public class UserController {
     }
 
     // Get all customers for admin
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAllCustomers")
     public ResponseEntity<?> getAllCustomers() {
         try {
@@ -65,6 +58,7 @@ public class UserController {
 
     // Update a user
     @PutMapping("/{uid}")
+    @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody UserDummy userRequest) {
         try {
             User updatedUser = userService.updateUserDetails(uid, userRequest);
@@ -81,7 +75,9 @@ public class UserController {
     }
 
     // Delete a user
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{uid}")
+    
     public ResponseEntity<?> deleteUser(@PathVariable Integer uid) {
         try {
             userService.deleteUser(uid);

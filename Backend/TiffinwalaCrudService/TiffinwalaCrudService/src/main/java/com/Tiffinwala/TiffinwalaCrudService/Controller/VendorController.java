@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class VendorController {
 
     // Get all Vendors
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") 
     public ResponseEntity<List<Vendor>> getAllVendors() {
         List<Vendor> vendors = vendorService.getAllVendors();
         return new ResponseEntity<>(vendors, HttpStatus.OK);
@@ -36,26 +38,18 @@ public class VendorController {
 
     // Change Vendor Verification Status for admin
     @PutMapping("/{id}/verify")
+    @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<Vendor> updateVerificationStatus(
             @PathVariable Integer id, @RequestParam Boolean isVerified) {
         Vendor updatedVendor = vendorService.updateVerificationStatus(id, isVerified);
         return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
     }
 
-    // Register a new user
-    @PostMapping("/RegUser")
-    public ResponseEntity<String> saveUser(@RequestBody RegDummy r) {
-        try {
-            vendorService.saveUser(r);
-            return ResponseEntity.ok("User registered successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error saving user: " + e.getMessage());
-        }
-    }
+   
 
     // Get all approved vendors for admin
     @GetMapping("/getAllApprovedVendor")
+    @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<List<Vendor>> getAllApprovedVendors() {
         List<Vendor> vendors = vendorService.getAllApprovedVendors();
         return new ResponseEntity<>(vendors, HttpStatus.OK);
@@ -63,12 +57,14 @@ public class VendorController {
 
     // Get all unapproved vendors for admin
     @GetMapping("/getBlockedVendors")
+    @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<List<Vendor>> getAllUnapprovedVendors() {
         List<Vendor> vendors = vendorService.getAllUnapprovedVendors();
         return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
     
     @GetMapping("/vendor/{uid}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER','VENDOR')") 
     public ResponseEntity<Vendor> getVendorByUserUid(@PathVariable Integer uid) {
         Vendor vendor = vendorService.getVendorByUserId(uid);
         if (vendor != null) {
