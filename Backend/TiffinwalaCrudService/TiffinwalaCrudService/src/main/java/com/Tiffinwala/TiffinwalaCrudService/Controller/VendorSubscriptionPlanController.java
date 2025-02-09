@@ -47,7 +47,6 @@ public class VendorSubscriptionPlanController {
     	        @RequestParam("name") String name,
     	        @RequestParam("price") Integer price,
     	        @RequestParam("description") String description,
-    	        @RequestParam("isAvaliable") boolean isAvaliable,
     	        @RequestParam("duration") SubscriptionDuration duration,
     	        @RequestParam(value = "image", required = false) MultipartFile image) {
     	    
@@ -57,7 +56,6 @@ public class VendorSubscriptionPlanController {
     	    dto.setName(name);
     	    dto.setPrice(price);
     	    dto.setDescription(description);
-    	    dto.setAvaliable(isAvaliable);
     	    dto.setDuration(duration);
     	    dto.setImage(image);
 
@@ -80,16 +78,14 @@ public class VendorSubscriptionPlanController {
     	        @RequestParam(value = "image", required = false) MultipartFile image) {
 
     	    VendorSubscriptionPlanDTO dto = new VendorSubscriptionPlanDTO();
-    	   
-    	 
     	    dto.setName(name);
     	    dto.setPrice(price);
     	    dto.setDescription(description);
     	    dto.setDuration(duration);
-    	    dto.setImage(image);
+    	    dto.setImage(image); // Nullable, so image update is optional
 
-    	    VendorSubscriptionPlan updatedPlan = vendorSubscriptionPlanService.updateSubscriptionPlan(dto,planId);
-    	    return new ResponseEntity<>(updatedPlan, HttpStatus.OK);
+    	    VendorSubscriptionPlan updatedPlan = vendorSubscriptionPlanService.updateSubscriptionPlan(dto, planId);
+    	    return ResponseEntity.ok(updatedPlan);
     	}
 
 

@@ -39,7 +39,7 @@ public class VendorSubscriptionPlanService {
         subscriptionPlan.setName(dto.getName());
         subscriptionPlan.setPrice(dto.getPrice());
         subscriptionPlan.setDescription(dto.getDescription());
-        subscriptionPlan.setIsAvailable(dto.isAvaliable());
+       subscriptionPlan.setIsAvailable(false);
         subscriptionPlan.setDuration(dto.getDuration());
         try {
 			subscriptionPlan.setImage(dto.getImage().getBytes());
@@ -60,7 +60,7 @@ public class VendorSubscriptionPlanService {
     
     // update subcription plan
     
-    public VendorSubscriptionPlan updateSubscriptionPlan(VendorSubscriptionPlanDTO dto,int planId) {
+    public VendorSubscriptionPlan updateSubscriptionPlan(VendorSubscriptionPlanDTO dto, int planId) {
         VendorSubscriptionPlan existingPlan = vendorSubscriptionPlanRepository.findById(planId)
             .orElseThrow(() -> new ResourceNotFoundException("Subscription Plan not found with ID: " + planId));
 
@@ -69,6 +69,7 @@ public class VendorSubscriptionPlanService {
         existingPlan.setDescription(dto.getDescription());
         existingPlan.setDuration(dto.getDuration());
 
+        // Only update image if a new one is provided
         if (dto.getImage() != null && !dto.getImage().isEmpty()) {
             try {
                 existingPlan.setImage(dto.getImage().getBytes());
