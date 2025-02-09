@@ -13,7 +13,8 @@ export default function VendorSubPlanList() {
             try {
                 // Retrieve logged-in user ID from localStorage
                 const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
-                
+                const token = localStorage.getItem("jwtToken");
+
                 if (!loggedUser || !loggedUser.uid) {
                     throw new Error("User not logged in or UID missing.");
                 }
@@ -24,7 +25,12 @@ export default function VendorSubPlanList() {
                 }
 
                 // Fetch vendor details
-                const vendorResponse = await fetch(`http://localhost:8102/api/vendors/vendor/${userId}`);
+                const vendorResponse = await fetch(`http://localhost:8103/api/vendors/vendor/${userId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 if (!vendorResponse.ok) {
                     throw new Error("Failed to fetch vendor details.");
                 }
@@ -43,7 +49,12 @@ export default function VendorSubPlanList() {
                 setVendorId(parsedVendorId);
 
                 // Fetch subscription plans using the vendor ID
-                const plansResponse = await fetch(`http://localhost:8102/api/vendor-subscription-plans/vendor/${parsedVendorId}`);
+                const plansResponse = await fetch(`http://localhost:8103/api/vendor-subscription-plans/vendor/${parsedVendorId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 if (!plansResponse.ok) {
                     throw new Error("Failed to fetch subscription plans.");
                 }
@@ -62,8 +73,13 @@ export default function VendorSubPlanList() {
 
     const enablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}/enabled`, {
+            const token = localStorage.getItem("jwtToken");
+
+            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/enabled`, {
                 method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             if (!response.ok) {
                 throw new Error("Failed to enable subscription plan.");
@@ -76,8 +92,13 @@ export default function VendorSubPlanList() {
 
     const disablePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}/disabled`, {
+            const token = localStorage.getItem("jwtToken");
+
+            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/disabled`, {
                 method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             if (!response.ok) {
                 throw new Error("Failed to disable subscription plan.");
@@ -90,8 +111,13 @@ export default function VendorSubPlanList() {
 
     const deletePlan = async (planId) => {
         try {
-            const response = await fetch(`http://localhost:8102/api/vendor-subscription-plans/${planId}`, {
+            const token = localStorage.getItem("jwtToken");
+
+            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}`, {
                 method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             if (!response.ok) {
                 throw new Error("Failed to delete subscription plan.");
@@ -126,7 +152,7 @@ export default function VendorSubPlanList() {
                 <tbody>
                     {subPlanList.map((plan) => (
                         <tr key={plan.planId}>
-                            <td><a href={`/subscription/plan/${plan.planId}`}>{plan.name}</a></td>
+                            <td><a href={`/myplan/${plan.planId}`}>{plan.name}</a></td>
                             <td>{plan.description}</td>
                             <td>{plan.duration}</td>
                             <td>{plan.price} /-</td>

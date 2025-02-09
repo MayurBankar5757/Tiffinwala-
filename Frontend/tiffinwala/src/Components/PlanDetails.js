@@ -1,61 +1,80 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Link } from 'react-router-dom'; 
+import { useParams, Link } from 'react-router-dom';
 
 export default function PlanDetails() {
+  const { id } = useParams();
+  const [plan, setPlan] = useState(null);
+  const [error, setError] = useState("");
+  const jwtToken = localStorage.getItem("jwtToken");
 
-    const { id } = useParams(); // Get the plan ID from the URL
-    const [plan, setPlan] = useState(null);
-    const [error, setError] = useState("");
-  
-    useEffect(() => {
-      fetch(`http://localhost:8102/api/vendor-subscription-plans/getSubscriptionPlanById/${id}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setPlan(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching subscription plan details:", error);
-          setError("Failed to fetch plan details.");
+  useEffect(() => {
+    if (!jwtToken) {
+      setError("Authentication required");
+      return;
+    }
+
+    fetch(`http://localhost:8103/api/vendor-subscription-plans/getSubscriptionPlanById/${id}`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "application/json"
+      }
+    })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.message || 'Failed to fetch plan');
         });
-    }, [id]); // Re-run when `id` changes
-  
-    if (error) {
-      return <p className="text-danger">{error}</p>;
-    }
-  
-    if (!plan) {
-      return <p>Loading...</p>;
-    }
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setPlan(data);
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      setError(error.message);
+    });
+  }, [id, jwtToken]);
+
+  if (error) {
+    return (
+      <div className="container mt-5 text-center">
+        <p className="text-danger">{error}</p>
+        <Link to="/customer_home" className="btn btn-secondary mt-3">
+          Back to Plans
+        </Link>
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
+
   return (
-      <div> 
-       <div className="container mt-6">
-      <h2>{plan.name}</h2>
+    <div className="container mt-5">
+      <h2 className="mb-4">{plan.name}</h2>
       <img
-        src={plan.image}
-        className="img-fluid"
+        src={`data:image/png;base64,${plan.image}`}
+        className="img-fluid rounded shadow"
         alt={plan.name}
         style={{ maxHeight: "300px", objectFit: "cover" }}
       />
-      <h5 className="mt-3">{plan.duration}</h5>
-      <p>{plan.description}</p>
-      <p>
-        <strong>Price:</strong> ₹{plan.price}
-      </p>
-      <span className={`badge ${plan.isAvailable ? "bg-success" : "bg-danger"}`}>
-        {plan.isAvailable ? "Available" : "Not Available"}
-      </span>
-      <br />
-      <Link to="/customer_home" className="btn btn-secondary mt-3">
-        Back to Plans
-      </Link>
-    </div>
+      <div className="mt-4">
+        <h5 className="text-muted">{plan.duration.replace('_', ' ').toLowerCase()}</h5>
+        <p className="lead">{plan.description}</p>
+        <p className="h4">
+          <strong>Price:</strong> ₹{plan.price}
+        </p>
+        <span className={`badge ${plan.isAvailable ? "bg-success" : "bg-danger"} fs-6`}>
+          {plan.isAvailable ? "Available" : "Not Available"}
+        </span>
       </div>
+      <div className="mt-4">
+        <Link to="/customer_home" className="btn btn-secondary">
+          Back to Plans
+        </Link>
+      </div>
+    </div>
   );
-
 }

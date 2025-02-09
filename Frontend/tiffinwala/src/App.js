@@ -18,8 +18,13 @@ import ShowSubscribedCustomers from './Components/ShowSubscribedCustomers';
 import AddSubscription from './Components/CreateSubscriptionPlan';
 import EditSubscription from './Components/EditSubscriptionPlan';
 import UpdateUserForm from './Components/UpdateProfile';
+import PlanDetails from './Components/PlanDetails';
 
-import UpdateCustomerForm from './Components/CustomerProfileUpdate';
+import EnabledPlans from './Components/EnabledPlans';
+import DisabledPlans from './Components/DisabledPlans';
+import VendorMyPlanDetails from './Components/VedorPlanDetailsVendor';
+import GetAllVendors from './Components/GetAllVendors';
+
 function App() {
   const mystate = useSelector((state) => state.logged);
   console.log(mystate);
@@ -51,7 +56,16 @@ function App() {
           <Route path="/showSubscribedCustomers/:id" element={<ShowSubscribedCustomers />} />
           <Route path='/editSubscriptionPlan/:id' element={<EditSubscription/>}/>
           <Route path= '/updateUser' element={<UpdateUserForm/>}/>
-          <Route path='/UpdateCustomerProfile' element = {<UpdateCustomerForm/>}/>
+          <Route path = '/enabledPlans' element = {<EnabledPlans/>}/>
+          <Route path = '/disabledPlans' element = {<DisabledPlans/>}/>
+
+          <Route path='/myplan/:id' element={<VendorMyPlanDetails/>}/>
+
+
+
+          <Route path = '/admin/vendors/all' element = {<GetAllVendors/>}/>
+
+
 
         </Routes>
       </div>

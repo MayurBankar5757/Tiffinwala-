@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-export default function VendorPlanDetails() {
+export default function VendorMyPlanDetails() {
   const { id } = useParams();
   const [plan, setPlan] = useState(null);
   const [tiffins, setTiffins] = useState([]);
   const [error, setError] = useState("");
-  const [userInfo, setUserInfo] = useState(null);
   const jwtToken = localStorage.getItem("jwtToken");
 
   useEffect(() => {
@@ -58,8 +57,7 @@ export default function VendorPlanDetails() {
         setTiffins(tiffinsData);
 
         // Set user info
-        const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
-        setUserInfo(storedUser);
+        
       } catch (error) {
         console.error("Fetch error:", error);
         setError(error.message);
@@ -69,43 +67,7 @@ export default function VendorPlanDetails() {
     fetchData();
   }, [id, jwtToken]);
 
-  const handleSubscribe = async () => {
-    if (!userInfo) {
-      alert("Please log in to subscribe.");
-      return;
-    }
 
-    try {
-      const subscriptionData = {
-        userId: userInfo.uid, // Use uid from Postman response
-        subscriptionPlanId: id,
-      };
-
-      const response = await fetch(
-        "http://localhost:8103/api/subscriptions/subscribePlan",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify(subscriptionData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Subscription failed");
-      }
-
-      const data = await response.json();
-      alert("Subscription successful!");
-      console.log("Subscription details:", data);
-    } catch (error) {
-      console.error("Subscription error:", error);
-      alert(error.message);
-    }
-  };
 
   if (error) {
     return <p className="text-danger text-center mt-5">{error}</p>;
@@ -162,15 +124,8 @@ export default function VendorPlanDetails() {
 
               {/* Subscription Button */}
               <div className="text-center mt-5">
-                <button
-                  className="btn btn-success btn-lg px-5 py-3"
-                  onClick={handleSubscribe}
-                  disabled={!plan.isAvailable}
-                >
-                  Subscribe
-                </button>
                 <Link
-                  to="/customer_home"
+                  to="/vendorAllPlans"
                   className="btn btn-outline-secondary btn-lg px-5 py-3 ms-3"
                 >
                   Back to Plans

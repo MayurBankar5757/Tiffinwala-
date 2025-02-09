@@ -104,6 +104,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         
         
         <dependency>
@@ -112,6 +113,8 @@
 			<version>4.2.0</version>
 		</dependency>
         
+=======
+>>>>>>> 2a15ba89309c629a3708667d5227bfa7fd83a6a0
     </dependencies>
 
     <build>

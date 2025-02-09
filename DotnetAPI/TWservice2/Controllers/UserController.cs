@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TWservice2.DTO;
 using TWservice2.Models;
 
 namespace TWservice2.Controllers
@@ -18,7 +19,6 @@ namespace TWservice2.Controllers
             }
             return users;
         }
-
 
     }
 }
