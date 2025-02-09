@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "react-bootstrap";
 
 export default function VendorHome() {
   const navigate = useNavigate();
@@ -8,16 +9,16 @@ export default function VendorHome() {
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
     if (!loggedUser) {
-      navigate("/"); // Redirect to login if no user is logged in
+      navigate("/");
       return;
     }
 
     const loginid = loggedUser.uid;
-    const token = localStorage.getItem("jwtToken"); // Fetch token
+    const token = localStorage.getItem("jwtToken");
 
     if (!token) {
       console.error("No token found in localStorage");
-      navigate("/"); // Redirect to login
+      navigate("/");
       return;
     }
 
@@ -39,11 +40,56 @@ export default function VendorHome() {
       .catch((error) => {
         console.error("Error fetching vendor data:", error);
       });
-  }, []);
+  }, [navigate]);
+
+  const renderNavigationCards = () => {
+    if (!vendor?.isVerified) {
+      return (
+        <Alert variant="warning" className="mt-4">
+          <h4 className="alert-heading">Account Under Review</h4>
+          <p>
+            Your vendor account is not yet verified. Please wait for admin approval 
+            before accessing these features. You'll be notified via email once 
+            your account is verified.
+          </p>
+        </Alert>
+      );
+    }
+
+    return (
+      <div className="row g-4">
+        {[
+          { title: "Update Profile", text: "Update your account details.", link: "/updateUser" },
+          { title: "Add Subscription Plan", text: "Add new Subscription Plan Details", link: "/addSubcriptionPlan" },
+          { title: "Display Subscription Plans", text: "Show all Added Subscription Plans", link: "/vendorAllPlans" },
+          { title: "Enabled Subscription Plan", text: "Show Enabled Subscription Plans", link: "/enabledPlans" },
+          { title: "Disabled Subscription Plans", text: "Show Disabled Subscription Plans", link: "/disabledPlans" },
+        ].map((item, index) => (
+          <div key={index} className="col-sm-6 col-md-4">
+            <div
+              className="card shadow-lg border-0 rounded-3 text-white bg-gradient"
+              style={{ 
+                cursor: "pointer", 
+                backgroundColor: "#007bff",
+                transition: "all 0.3s ease"
+              }}
+              onClick={() => navigate(item.link)}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
+            >
+              <div className="card-body p-4">
+                <h5 className="card-title fw-bold">{item.title}</h5>
+                <p className="card-text">{item.text}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div>
-      {/* Welcome Section */}
       <div
         style={{
           paddingTop: "60px",
@@ -58,7 +104,6 @@ export default function VendorHome() {
             Welcome {vendor?.user?.fname} {vendor?.user?.lname}
           </h1>
 
-          {/* Vendor Details Section */}
           {vendor && (
             <div className="alert alert-info mt-4 p-4 shadow-sm rounded">
               <h2 className="text-secondary">Vendor Details</h2>
@@ -66,8 +111,12 @@ export default function VendorHome() {
                 <strong>Vendor ID:</strong> {vendor.vendorId}
               </p>
               <p>
-                <strong>Is Verified:</strong>{" "}
-                {vendor.isVerified ? "✅ Yes" : "❌ No"}
+                <strong>Verification Status:</strong>{" "}
+                {vendor.isVerified ? (
+                  <span className="text-success">✅ Verified</span>
+                ) : (
+                  <span className="text-danger">❌ Pending Verification</span>
+                )}
               </p>
 
               <h3 className="mt-4 text-secondary">User Details</h3>
@@ -99,32 +148,8 @@ export default function VendorHome() {
         </div>
       </div>
 
-      {/* Navigation Cards */}
       <div className="container" style={{ marginBottom: "50px", textAlign: "center" }}>
-        <div className="row g-4">
-          {[
-            { title: "Update Profile", text: "Update your account details.", link: "/updateUser" },
-            { title: "Add Subscription Plan", text: "Add new Subscription Plan Details", link: "/addSubcriptionPlan" },
-            { title: "Display Subscription Plans", text: "Show all Added Subscription Plans", link: "/vendorAllPlans" },
-            { title: "Enabled Subscription Plan", text: "Show Enabled Subscription Plans", link: "/enabledPlans" },
-            { title: "Disabled Subscription Plans", text: "Show Disabled Subscription Plans", link: "/disabledPlans" },
-          ].map((item, index) => (
-            <div key={index} className="col-sm-6 col-md-4">
-              <div
-                className="card shadow-lg border-0 rounded-3 text-white bg-gradient"
-                style={{ cursor: "pointer", backgroundColor: "#007bff" }}
-                onClick={() => navigate(item.link)}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
-              >
-                <div className="card-body p-4">
-                  <h5 className="card-title fw-bold">{item.title}</h5>
-                  <p className="card-text">{item.text}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {renderNavigationCards()}
       </div>
     </div>
   );

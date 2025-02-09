@@ -152,7 +152,7 @@ export default function VendorSubPlanList() {
                 <tbody>
                     {subPlanList.map((plan) => (
                         <tr key={plan.planId}>
-                            <td><a href={`/subscription/plan/${plan.planId}`}>{plan.name}</a></td>
+                            <td><a href={`/myplan/${plan.planId}`}>{plan.name}</a></td>
                             <td>{plan.description}</td>
                             <td>{plan.duration}</td>
                             <td>{plan.price} /-</td>
