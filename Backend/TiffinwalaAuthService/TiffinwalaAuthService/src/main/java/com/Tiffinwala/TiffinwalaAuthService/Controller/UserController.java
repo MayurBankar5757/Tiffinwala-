@@ -23,8 +23,8 @@ import com.Tiffinwala.TiffinwalaAuthService.Services.UserService;
 
 
 @RestController
-@RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/auth")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class UserController {
 
     @Autowired
@@ -40,7 +40,7 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     // Login endpoint
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginCheck login) {
         try {
         	System.out.println("Inside login");
@@ -57,59 +57,59 @@ public class UserController {
         }
     }
 
-    // Get a user by ID
-    @GetMapping("/{uid}")
-    public ResponseEntity<?> getUserById(@PathVariable Integer uid) {
-        try {
-            User user = userService.getUserById(uid);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Get all customers for admin
-    @GetMapping("/getAllCustomers")
-    public ResponseEntity<?> getAllCustomers() {
-        try {
-        	System.out.println("GetAllCustomers");
-            List<User> users = userService.getAllCustomers();
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to retrieve customers", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Update a user
-    @PutMapping("/{uid}")
-    public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody UserDummy userRequest) {
-        try {
-            User updatedUser = userService.updateUserDetails(uid, userRequest);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to update user. Try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Delete a user
-    @DeleteMapping("/{uid}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer uid) {
-        try {
-            userService.deleteUser(uid);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-}
+//    // Get a user by ID
+//    @GetMapping("/{uid}")
+//    public ResponseEntity<?> getUserById(@PathVariable Integer uid) {
+//        try {
+//            User user = userService.getUserById(uid);
+//            return new ResponseEntity<>(user, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        }
+//    }
+//
+//    // Get all customers for admin
+//    @GetMapping("/getAllCustomers")
+//    public ResponseEntity<?> getAllCustomers() {
+//        try {
+//        	System.out.println("GetAllCustomers");
+//            List<User> users = userService.getAllCustomers();
+//            return new ResponseEntity<>(users, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to retrieve customers", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    // Update a user
+//    @PutMapping("/{uid}")
+//    public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody UserDummy userRequest) {
+//        try {
+//            User updatedUser = userService.updateUserDetails(uid, userRequest);
+//            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+//        } catch (ResourceNotFoundException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        } catch (DataIntegrityViolationException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+//        } catch (IllegalArgumentException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to update user. Try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    // Delete a user
+//    @DeleteMapping("/{uid}")
+//    public ResponseEntity<?> deleteUser(@PathVariable Integer uid) {
+//        try {
+//            userService.deleteUser(uid);
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } catch (ResourceNotFoundException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//}
 
 // Authentication Response Class
 //class AuthenticationResponse {
@@ -123,3 +123,4 @@ public class UserController {
 //        return jwt;
 //    }
 //}
+   }

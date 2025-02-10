@@ -23,8 +23,8 @@ import com.Tiffinwala.TiffinwalaCrudService.Entities.CustomerSubscribedPlans;
 import com.Tiffinwala.TiffinwalaCrudService.Services.CustomerSubscribedPlansService;
 
 @RestController
-@RequestMapping("/api/subscriptions")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/api2")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class CustomerSubscribedPlansController {
 
     private final CustomerSubscribedPlansService customerSubscribedPlansService;
@@ -35,7 +35,7 @@ public class CustomerSubscribedPlansController {
     }
 
     // Endpoint to create a subscription
-    @PostMapping("/subscribePlan")
+    @PostMapping("/csp/subscribePlan")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<?> createSubscription(@RequestBody CustomerSubscriptionDTO subscriptionDTO) {
         try {
@@ -53,21 +53,21 @@ public class CustomerSubscribedPlansController {
         }
     }
 
-    @GetMapping("/planid/{planId}")
+    @GetMapping("/csp/planid/{planId}")
     @PreAuthorize("hasAuthority('CUSTOMER','VENDOR')") // access in by vendor id
     public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionBySubcriptionId(@PathVariable Integer planId) {
         List<CustomerSubscribedPlans> subscriptions = customerSubscribedPlansService.getSubscriptionPlansByVendorId(planId);
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/csp/getAllSubscriptions")
     @PreAuthorize("hasAnyAuthority('CUSTOMER','VENDOR')")
     public ResponseEntity<List<CustomerSubscribedPlans>> getAllSubscriptions() {
         List<CustomerSubscribedPlans> allSubscriptions = customerSubscribedPlansService.getAllSubscriptionPlans();
         return new ResponseEntity<>(allSubscriptions, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/csp/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<?> deleteSubscription(@PathVariable Integer id) {
         try {
@@ -82,7 +82,7 @@ public class CustomerSubscribedPlansController {
         }
     }
 
-    @GetMapping("/user/{uid}")
+    @GetMapping("/csp/user/{uid}")
     @PreAuthorize("hasAnyAuthority('CUSTOMER','VENDOR')")
     public ResponseEntity<List<CustomerSubscribedPlans>> getSubscriptionPlansByUserId(@PathVariable Integer uid) {
         List<CustomerSubscribedPlans> plans = customerSubscribedPlansService.getSubscriptionPlansByUserId(uid);
