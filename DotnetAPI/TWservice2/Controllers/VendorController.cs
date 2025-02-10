@@ -4,7 +4,7 @@ using TWservice2.Models;
 
 namespace TWservice2.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api3/[controller]/[action]")]
     [ApiController]
     public class VendorController : Controller
     {

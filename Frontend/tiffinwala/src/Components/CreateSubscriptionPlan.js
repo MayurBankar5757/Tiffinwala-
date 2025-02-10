@@ -38,7 +38,7 @@ const AddSubscription = () => {
           return;
         }
         const loggedUserID = loggedUser.uid;
-        const response = await fetch(`http://localhost:8103/api/vendors/vendor/${loggedUserID}`, {
+        const response = await fetch(`http://localhost:8104/api2/vendor/vendor/${loggedUserID}`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
@@ -123,7 +123,7 @@ const AddSubscription = () => {
      console.log(subPlanImage)
       // First request - create subscription plan
       const planResponse = await fetch(
-        "http://localhost:8103/api/vendor-subscription-plans/create",
+        "http://localhost:8104/api2/vsp/create",
         {
           method: "POST",
           body: formData,
@@ -155,7 +155,7 @@ const AddSubscription = () => {
         };
 
         const tiffinResponse = await fetch(
-          "http://localhost:8103/api/tiffins/createtiffin", // Fixed port number
+          "http://localhost:8104/api2/tiffin/createtiffin", // Fixed port number
           {
             method: "POST",
             headers: {

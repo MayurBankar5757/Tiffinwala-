@@ -13,7 +13,7 @@ export default function PlanDetails() {
       return;
     }
 
-    fetch(`http://localhost:8103/api/vendor-subscription-plans/getSubscriptionPlanById/${id}`, {
+    fetch(`http://localhost:8104/api2/vsp/getSubscriptionPlanById/${id}`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         "Content-Type": "application/json"

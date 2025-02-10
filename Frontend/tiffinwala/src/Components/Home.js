@@ -7,7 +7,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8103/api/vendor-subscription-plans/getAllSubcriptionPlan")
+    fetch("http://localhost:8104/api2/vsp/getAllSubcriptionPlan")
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         return response.json();
@@ -44,8 +44,6 @@ export default function Home() {
           style={{ width: "100%", height: "250px", objectFit: "cover", borderRadius: "10px" }}
         />
       </div>
-
-      <h1 className="text-center my-4">Subscription Plans</h1>
 
       {/* Filters & Sorting */}
       <div className="d-flex justify-content-between mb-3">

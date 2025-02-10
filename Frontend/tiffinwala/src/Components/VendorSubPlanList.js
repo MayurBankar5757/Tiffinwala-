@@ -25,7 +25,7 @@ export default function VendorSubPlanList() {
                 }
 
                 // Fetch vendor details
-                const vendorResponse = await fetch(`http://localhost:8103/api/vendors/vendor/${userId}`, {
+                const vendorResponse = await fetch(`http://localhost:8104/api2/vendor/vendor/${userId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
@@ -49,7 +49,7 @@ export default function VendorSubPlanList() {
                 setVendorId(parsedVendorId);
 
                 // Fetch subscription plans using the vendor ID
-                const plansResponse = await fetch(`http://localhost:8103/api/vendor-subscription-plans/vendor/${parsedVendorId}`, {
+                const plansResponse = await fetch(`http://localhost:8104/api2/vsp/vendor/${parsedVendorId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
@@ -75,7 +75,7 @@ export default function VendorSubPlanList() {
         try {
             const token = localStorage.getItem("jwtToken");
 
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/enabled`, {
+            const response = await fetch(`http://localhost:8104/api2/vsp/${planId}/enabled`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -94,7 +94,7 @@ export default function VendorSubPlanList() {
         try {
             const token = localStorage.getItem("jwtToken");
 
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}/disabled`, {
+            const response = await fetch(`http://localhost:8104/api2/vsp/${planId}/disabled`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -113,7 +113,7 @@ export default function VendorSubPlanList() {
         try {
             const token = localStorage.getItem("jwtToken");
 
-            const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/${planId}`, {
+            const response = await fetch(`http://localhost:8104/api2/vsp/${planId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`

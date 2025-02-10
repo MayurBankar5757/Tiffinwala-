@@ -80,7 +80,7 @@ export default function UpdateUserForm() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8103/api/users/${uid}`, {
+      const response = await fetch(`http://localhost:8104/api2/user/${uid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

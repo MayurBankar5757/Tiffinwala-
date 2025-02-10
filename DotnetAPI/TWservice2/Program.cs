@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using TWservice2.Models;
+using Steeltoe.Discovery.Client;
 
 namespace TWservice2
 {
@@ -9,6 +10,9 @@ namespace TWservice2
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add Steeltoe Discovery Client
+            builder.Services.AddDiscoveryClient(builder.Configuration);
 
             // Add services to the container
             builder.Services.AddControllers()
@@ -21,13 +25,13 @@ namespace TWservice2
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             // ✅ Configure CORS
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader());
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAll",
+            //        builder => builder.AllowAnyOrigin()
+            //                          .AllowAnyMethod()
+            //                          .AllowAnyHeader());
+            //});
 
             // ✅ Swagger
             builder.Services.AddEndpointsApiExplorer();
@@ -42,8 +46,11 @@ namespace TWservice2
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseAuthorization();
+
+            app.UseDiscoveryClient();
+
 
             // Apply CORS policy
             app.UseCors("AllowAll");

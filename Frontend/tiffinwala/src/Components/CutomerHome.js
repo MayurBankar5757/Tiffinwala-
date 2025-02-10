@@ -25,7 +25,7 @@ export default function CustomerHome() {
       return;
     }
 
-    fetch("http://localhost:8103/api/vendor-subscription-plans/getAllSubcriptionPlan", {
+    fetch("http://localhost:8104/api2/vsp/getAllSubcriptionPlan", {
       headers: { Authorization: `Bearer ${jwtToken}` },
     })
       .then((response) => {
@@ -82,7 +82,7 @@ export default function CustomerHome() {
       return;
     }
 
-    fetch("http://localhost:8103/api/subscriptions/subscribePlan", {
+    fetch("http://localhost:8104/api2/csp/subscribePlan", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -29,7 +29,7 @@ export default function Home() {
         setMsg("");
 
         try {
-            const response = await fetch("http://localhost:8102/api/users/auth/login", {
+            const response = await fetch("http://localhost:8104/auth/login", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(info),

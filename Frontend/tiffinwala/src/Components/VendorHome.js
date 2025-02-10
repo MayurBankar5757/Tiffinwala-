@@ -22,7 +22,7 @@ export default function VendorHome() {
       return;
     }
 
-    fetch(`http://localhost:8103/api/vendors/vendor/${loginid}`, {
+    fetch(`http://localhost:8104/api2/vendor/vendor/${loginid}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

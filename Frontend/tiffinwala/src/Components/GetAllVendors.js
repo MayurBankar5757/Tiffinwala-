@@ -11,7 +11,7 @@ const GetAllVendors = () => {
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const response = await fetch('https://localhost:7282/api/Vendor/GetVendors');
+        const response = await fetch('http://localhost:8104/api3/Vendor/GetVendors');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -36,7 +36,7 @@ const GetAllVendors = () => {
       setVendors(updatedVendors);
 
       // API call to update verification status
-      const response = await fetch(`https://localhost:7282/api/Vendor/ToggleVendorVerification/${vendorId}`, {
+      const response = await fetch(`http://localhost:8104/api3/Vendor/ToggleVendorVerification/${vendorId}`, {
         method: 'PUT',
       });
 

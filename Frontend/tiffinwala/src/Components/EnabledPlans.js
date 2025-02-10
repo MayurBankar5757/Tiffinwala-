@@ -22,7 +22,7 @@ export default function EnabledPlans() {
                     throw new Error("Invalid user ID format.");
                 }
 
-                const vendorResponse = await fetch(`http://localhost:8103/api/vendors/vendor/${userId}`, {
+                const vendorResponse = await fetch(`http://localhost:8104/api2/vendor/vendor/${userId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
@@ -40,7 +40,7 @@ export default function EnabledPlans() {
 
                 const vendorId = vendorData.vendorId;
 
-                const response = await fetch(`http://localhost:8103/api/vendor-subscription-plans/vendor/${vendorId}/enabled`, {
+                const response = await fetch(`http://localhost:8104/api2/vsp/vendor/${vendorId}/enabled`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`

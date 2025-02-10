@@ -8,7 +8,7 @@ export default function ShowSubscribedCustomers() {
     console.log(subscribedCustomers);
     useEffect(() => {
         // Fetch data based on the 'id' (planid) from the URL
-        fetch(`http://localhost:8103/api/subscriptions/planid/${id}`,
+        fetch(`http://localhost:8104/api2/csp/planid/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${jwtToken}`,

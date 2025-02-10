@@ -21,7 +21,7 @@ export default function VendorPlanDetails() {
       try {
         // Fetch plan details
         const planResponse = await fetch(
-          `http://localhost:8103/api/vendor-subscription-plans/${id}`,
+          `http://localhost:8104/api2/vsp/${id}`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
@@ -40,7 +40,7 @@ export default function VendorPlanDetails() {
 
         // Fetch tiffins
         const tiffinsResponse = await fetch(
-          `http://localhost:8103/api/tiffins/plan/${id}`,
+          `http://localhost:8104/api2/tiffin/plan/${id}`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
@@ -82,7 +82,7 @@ export default function VendorPlanDetails() {
       };
 
       const response = await fetch(
-        "http://localhost:8103/api/subscriptions/subscribePlan",
+        "http://localhost:8104/api2/csp/subscribePlan",
         {
           method: "POST",
           headers: {
