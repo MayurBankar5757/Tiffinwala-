@@ -2,8 +2,10 @@ package com.Tiffinwala.TiffinwalaCrudService.Services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.Tiffinwala.TiffinwalaCrudService.Entities.CustomerSubscribedPlans;
@@ -34,6 +36,13 @@ public class CustomerSubscribedPlansService {
 
     // Create a subscription plan
     public CustomerSubscribedPlans createSubscriptionPlan(Integer userId, Integer subscriptionPlanId, LocalDate orderedDate) {
+        // Check if the user already has an active subscription
+        Optional<CustomerSubscribedPlans> existingPlan = customerSubscribedPlansRepository.getPlanByUid(userId);
+        
+        if (existingPlan.isPresent()) {
+            return existingPlan.get(); // Return existing plan if found
+        }
+
         // Fetch the user based on userId
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with UID " + userId + " not found"));
@@ -42,20 +51,22 @@ public class CustomerSubscribedPlansService {
         VendorSubscriptionPlan vendorSubscriptionPlan = vendorSubscriptionPlanRepository.findById(subscriptionPlanId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subscription plan with ID " + subscriptionPlanId + " not found"));
 
-        // Use the passed duration directly
+        // Get the duration of the plan
         int durationInDays = vendorSubscriptionPlan.getDuration().getDays();
 
-        // Calculate the startDate and endDate
+        // Calculate start and end date
         LocalDate startDate = orderedDate;
-       
         LocalDate endDate = startDate.plusDays(durationInDays);
-        System.out.println("Duration last date "+durationInDays );
+
+        System.out.println("Duration last date: " + durationInDays);
+
         // Create the new subscription plan
         CustomerSubscribedPlans customerSubscribedPlan = new CustomerSubscribedPlans(user, vendorSubscriptionPlan, startDate, endDate, orderedDate);
 
         // Save the new subscription plan
         return customerSubscribedPlansRepository.save(customerSubscribedPlan);
     }
+
 
     // Get Customer Subscription Plans by Vendor Subscription Plan ID
     @Transactional
@@ -88,4 +99,18 @@ public class CustomerSubscribedPlansService {
         }
         return plans;
     }
+    
+    
+    // Scheduled task to delete expired plans daily at midnight
+    @Scheduled(cron = "0 0 0 * * ?") // Runs every day at 00:00 (midnight)
+    public void deleteExpiredPlans() {
+        LocalDate today = LocalDate.now();
+        List<CustomerSubscribedPlans> expiredPlans = customerSubscribedPlansRepository.findByEndDate(today);
+
+        if (!expiredPlans.isEmpty()) {
+            customerSubscribedPlansRepository.deleteAll(expiredPlans);
+            System.out.println("Deleted expired customer plans: " + expiredPlans.size());
+        }
+    }
+
 }

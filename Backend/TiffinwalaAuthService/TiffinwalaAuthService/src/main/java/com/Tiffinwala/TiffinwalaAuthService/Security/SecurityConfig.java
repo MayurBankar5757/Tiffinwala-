@@ -32,11 +32,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Ensure CORS is applied first
+            //.cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Ensure CORS is applied first
             .csrf(csrf -> csrf.disable()) // ✅ Disable CSRF for JWT-based authentication
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/authenticate", "/api/vendors/RegUser", "/api/users/auth/login").permitAll()
+                .requestMatchers("/authenticate", "/auth/RegUser", "/auth/login").permitAll()
                 .requestMatchers("/api/vendors/**").hasAuthority("VENDOR")
                 .requestMatchers("/api/users/**").hasAnyAuthority("ADMIN", "CUSTOMER", "VENDOR")
                 .anyRequest().authenticated()
@@ -47,11 +47,11 @@ public class SecurityConfig {
     }
 
     // ✅ Updated CORS Configuration
-    @Bean
+   /* @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200", "http://localhost:3010")); // ✅ Added frontend URL
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200", "http://localhost:3010", "http://localhost:8104")); // ✅ Added frontend URL
         configuration.setAllowedHeaders(List.of("*")); // ✅ Allow all headers
         configuration.setExposedHeaders(List.of("Authorization", "Content-Type")); // ✅ Expose necessary headers
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -59,7 +59,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

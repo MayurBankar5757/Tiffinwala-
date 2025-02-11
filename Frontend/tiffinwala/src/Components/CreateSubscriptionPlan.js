@@ -253,6 +253,11 @@ console.log(subPlanImage)
               {Object.entries(tiffins).map(([dayMeal, tiffin]) => (
                 <tr key={dayMeal}>
                   <td>{dayMeal.replace("_", " ")}</td>
+<<<<<<< HEAD
+                  <td><input type="text" name="name" className="form-control" value={tiffin.name} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
+                  <td><textarea name="description" className="form-control" value={tiffin.description} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
+                  <td><input  type="text" name="foodType" className="form-control" value={tiffin.foodType} onChange={(e) => handleTiffinChange(dayMeal, e)} required /></td>
+=======
                   <td>
                     <input
                       type="text"
@@ -282,6 +287,7 @@ console.log(subPlanImage)
                       required
                     />
                   </td>
+>>>>>>> 2a15ba89309c629a3708667d5227bfa7fd83a6a0
                 </tr>
               ))}
             </tbody>

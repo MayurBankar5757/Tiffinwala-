@@ -20,31 +20,18 @@ import com.Tiffinwala.TiffinwalaAuthService.Entities.Vendor;
 import com.Tiffinwala.TiffinwalaAuthService.Services.VendorService;
 
 @RestController
-@RequestMapping("/api/vendors")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/auth")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class VendorController {
 
     @Autowired
     private VendorService vendorService;
 
-    // Get all vendors
-    @GetMapping
-    public ResponseEntity<List<Vendor>> getAllVendors() {
-        List<Vendor> vendors = vendorService.getAllVendors();
-        return new ResponseEntity<>(vendors, HttpStatus.OK);
-    }
-
-    // Change vendor verification status for admin
-    @PutMapping("/{id}/verify")
-    public ResponseEntity<Vendor> updateVerificationStatus(
-            @PathVariable Integer id, @RequestParam Boolean isVerified) {
-        Vendor updatedVendor = vendorService.updateVerificationStatus(id, isVerified);
-        return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
-    }
-
     // Register a new user
     @PostMapping("/RegUser")
     public ResponseEntity<String> saveUser(@RequestBody RegDummy r) {
+    	System.out.println("");
+    	
         try {
             vendorService.saveUser(r);
             return ResponseEntity.ok("User registered successfully.");
@@ -54,20 +41,7 @@ public class VendorController {
         }
     }
 
-    // Get all approved vendors for admin
-    @GetMapping("/getAllApprovedVendor")
-    public ResponseEntity<List<Vendor>> getAllApprovedVendors() {
-        List<Vendor> vendors = vendorService.getAllApprovedVendors();
-        return new ResponseEntity<>(vendors, HttpStatus.OK);
-    }
 
-    // Get all unapproved vendors for admin
-    @GetMapping("/getBlockedVendors")
-    public ResponseEntity<List<Vendor>> getAllUnapprovedVendors() {
-        List<Vendor> vendors = vendorService.getAllUnapprovedVendors();
-        return new ResponseEntity<>(vendors, HttpStatus.OK);
-    }
-    
     // Get vendor by user ID
     @GetMapping("/vendor/{uid}")
     public ResponseEntity<Vendor> getVendorByUserUid(@PathVariable Integer uid) {

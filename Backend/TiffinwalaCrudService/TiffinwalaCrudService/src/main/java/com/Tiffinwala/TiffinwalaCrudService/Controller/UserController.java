@@ -24,8 +24,8 @@ import com.Tiffinwala.TiffinwalaCrudService.Exceptions.ResourceNotFoundException
 import com.Tiffinwala.TiffinwalaCrudService.Services.UserService;
 
 @RestController
-@RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/api3")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class UserController {
 
     @Autowired
@@ -34,7 +34,7 @@ public class UserController {
   
 
     // Get a user by ID
-    @GetMapping("/{uid}")
+    @GetMapping("/user/{uid}")
     public ResponseEntity<?> getUserById(@PathVariable Integer uid) {
         try {
             User user = userService.getUserById(uid);
@@ -46,7 +46,7 @@ public class UserController {
 
     // Get all customers for admin
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAllCustomers")
+    @GetMapping("/user/getAllCustomers")
     public ResponseEntity<?> getAllCustomers() {
         try {
             List<User> users = userService.getAllCustomers();
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     // Update a user
-    @PutMapping("/{uid}")
+    @PutMapping("/user/{uid}")
     @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody UserDummy userRequest) {
         try {
@@ -76,7 +76,7 @@ public class UserController {
 
     // Delete a user
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{uid}")
+    @DeleteMapping("/user/{uid}")
     
     public ResponseEntity<?> deleteUser(@PathVariable Integer uid) {
         try {

@@ -30,6 +30,5 @@ public interface VendorSubscriptionPlanRepository extends JpaRepository<VendorSu
     
     List<VendorSubscriptionPlan> findByIsAvailableFalse();
     
-
-
+    
 }

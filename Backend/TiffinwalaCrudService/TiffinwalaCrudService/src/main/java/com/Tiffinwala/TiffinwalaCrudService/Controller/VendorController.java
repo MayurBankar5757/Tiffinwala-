@@ -21,23 +21,23 @@ import com.Tiffinwala.TiffinwalaCrudService.Entities.Vendor;
 import com.Tiffinwala.TiffinwalaCrudService.Services.VendorService;
 
 @RestController
-@RequestMapping("/api/vendors")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/api2")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class VendorController {
 
     @Autowired
     private VendorService vendorService;
 
-    // Get all Vendors
-    @GetMapping
-    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") 
-    public ResponseEntity<List<Vendor>> getAllVendors() {
-        List<Vendor> vendors = vendorService.getAllVendors();
-        return new ResponseEntity<>(vendors, HttpStatus.OK);
-    }
+//    // Get all Vendors
+//    @GetMapping
+//    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") 
+//    public ResponseEntity<List<Vendor>> getAllVendors() {
+//        List<Vendor> vendors = vendorService.getAllVendors();
+//        return new ResponseEntity<>(vendors, HttpStatus.OK);
+//    }
 
     // Change Vendor Verification Status for admin
-    @PutMapping("/{id}/verify")
+    @PutMapping("/vendor/{id}/verify")
     @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<Vendor> updateVerificationStatus(
             @PathVariable Integer id, @RequestParam Boolean isVerified) {
@@ -48,7 +48,7 @@ public class VendorController {
    
 
     // Get all approved vendors for admin
-    @GetMapping("/getAllApprovedVendor")
+    @GetMapping("/vendor/getAllApprovedVendor")
     @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<List<Vendor>> getAllApprovedVendors() {
         List<Vendor> vendors = vendorService.getAllApprovedVendors();
@@ -56,14 +56,14 @@ public class VendorController {
     }
 
     // Get all unapproved vendors for admin
-    @GetMapping("/getBlockedVendors")
+    @GetMapping("/vendor/getBlockedVendors")
     @PreAuthorize("hasAuthority('ADMIN')") 
     public ResponseEntity<List<Vendor>> getAllUnapprovedVendors() {
         List<Vendor> vendors = vendorService.getAllUnapprovedVendors();
         return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
     
-    @GetMapping("/vendor/{uid}")
+    @GetMapping("/vendor/vendor/{uid}")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER','VENDOR')") 
     public ResponseEntity<Vendor> getVendorByUserUid(@PathVariable Integer uid) {
         Vendor vendor = vendorService.getVendorByUserId(uid);

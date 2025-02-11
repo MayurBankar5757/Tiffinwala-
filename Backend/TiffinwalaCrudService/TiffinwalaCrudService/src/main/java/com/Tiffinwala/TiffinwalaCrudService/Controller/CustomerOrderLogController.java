@@ -18,8 +18,8 @@ import com.Tiffinwala.TiffinwalaCrudService.Entities.CustomerOrderLog;
 import com.Tiffinwala.TiffinwalaCrudService.Services.CustomerOrderLogService;
 
 @RestController
-@RequestMapping("/api/orders")
-@CrossOrigin(origins = "http://localhost:3010") 
+@RequestMapping("/api2")
+//@CrossOrigin(origins = "http://localhost:3010") 
 public class CustomerOrderLogController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class CustomerOrderLogController {
         return customerOrderLogService.getAllOrders();
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/col/{orderId}")
     public ResponseEntity<CustomerOrderLog> getOrderById(@PathVariable Integer orderId) {
         return customerOrderLogService.getOrderById(orderId)
                 .map(ResponseEntity::ok)
@@ -42,7 +42,7 @@ public class CustomerOrderLogController {
         return customerOrderLogService.createOrder(orderLog);
     }
 
-    @PutMapping("/{orderId}")
+    @PutMapping("/col/{orderId}")
     public ResponseEntity<CustomerOrderLog> updateOrder(
             @PathVariable Integer orderId, 
             @RequestBody CustomerOrderLog updatedOrder) {
@@ -53,7 +53,7 @@ public class CustomerOrderLogController {
         }
     }
 
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/col/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Integer orderId) {
         customerOrderLogService.deleteOrder(orderId);
         return ResponseEntity.noContent().build();

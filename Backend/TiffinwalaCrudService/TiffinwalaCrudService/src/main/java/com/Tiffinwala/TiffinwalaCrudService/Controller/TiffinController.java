@@ -27,8 +27,8 @@ import com.Tiffinwala.TiffinwalaCrudService.Services.TiffinService;
 import ch.qos.logback.classic.Logger;
 
 @RestController
-@RequestMapping("/api/tiffins")
-@CrossOrigin(origins = "http://localhost:3010")
+@RequestMapping("/api2")
+//@CrossOrigin(origins = "http://localhost:3010")
 public class TiffinController {
 
     private final TiffinService tiffinService;
@@ -39,7 +39,7 @@ public class TiffinController {
 
     // Create a new tiffin
     
-    @PostMapping("/createtiffin")
+    @PostMapping("/tiffin/createtiffin")
     @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Tiffin> addTiffin(@RequestBody TiffinDummy dummy) {
         try {
@@ -66,7 +66,7 @@ public class TiffinController {
 //    }
 //   
 
-    @PutMapping("/updateTiffin/{tiffinId}")
+    @PutMapping("/tiffin/updateTiffin/{tiffinId}")
     @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Tiffin> updateTiffin(@PathVariable("tiffinId") Integer tiffinId, 
                                                @RequestBody TiffinDummy dummy) {
@@ -85,7 +85,7 @@ public class TiffinController {
     
     
     // Get all tiffins by subscription plan ID
-    @GetMapping("/plan/{planId}")
+    @GetMapping("/tiffin/plan/{planId}")
     @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<List<TiffinDTO>> getTiffinsByPlanId(@PathVariable("planId") Integer planId) {
     	System.out.println("getTiffinsByPlanId hit");
@@ -99,7 +99,7 @@ public class TiffinController {
     }
 
     // Get a tiffin by ID
-    @GetMapping("/{tiffinId}")
+    @GetMapping("/tiffin/{tiffinId}")
     @PreAuthorize("hasAnyAuthority('VENDOR', 'CUSTOMER', 'ADMIN')") 
     public ResponseEntity<Tiffin> getTiffinById(@PathVariable Integer tiffinId) {
         try {
@@ -113,7 +113,7 @@ public class TiffinController {
     
 
     // Delete a tiffin
-    @DeleteMapping("/{tiffinId}")
+    @DeleteMapping("/tiffin/{tiffinId}")
     @PreAuthorize("hasAuthority('VENDOR')")
     public ResponseEntity<Void> deleteTiffin(@PathVariable Integer tiffinId) {
         try {
