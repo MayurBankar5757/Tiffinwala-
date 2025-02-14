@@ -39,11 +39,12 @@ public class CustomerSubscribedPlansController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<?> createSubscription(@RequestBody CustomerSubscriptionDTO subscriptionDTO) {
         try {
-            LocalDate liveDate = LocalDate.now();
+            LocalDate orderedDate = LocalDate.now(); // Renamed from liveDate for clarity
             CustomerSubscribedPlans createdPlan = customerSubscribedPlansService.createSubscriptionPlan(
                     subscriptionDTO.getUserId(),
                     subscriptionDTO.getSubscriptionPlanId(),
-                    liveDate
+                    subscriptionDTO.getStartDate(), // Get from DTO
+                    orderedDate
             );
             return new ResponseEntity<>(createdPlan, HttpStatus.CREATED);
         } catch (RuntimeException e) {
