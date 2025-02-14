@@ -34,11 +34,10 @@ public class CustomerSubscribedPlansService {
         this.vendorSubscriptionPlanRepository = vendorSubscriptionPlanRepository;
     }
 
-    // Create a subscription plan
-    public CustomerSubscribedPlans createSubscriptionPlan(Integer userId, Integer subscriptionPlanId, LocalDate orderedDate) {
-        // Check if the user already has an active subscription
-        Optional<CustomerSubscribedPlans> existingPlan = customerSubscribedPlansRepository.getPlanByUid(userId);
-        
+    public CustomerSubscribedPlans createSubscriptionPlan(Integer userId, Integer subscriptionPlanId, LocalDate startDate, LocalDate orderedDate) {
+        // Check if the user already has an active subscription for the given plan
+        Optional<CustomerSubscribedPlans> existingPlan = customerSubscribedPlansRepository.getPlanByUidAndPlanId(userId, subscriptionPlanId);
+
         if (existingPlan.isPresent()) {
             return existingPlan.get(); // Return existing plan if found
         }
@@ -55,18 +54,18 @@ public class CustomerSubscribedPlansService {
         int durationInDays = vendorSubscriptionPlan.getDuration().getDays();
 
         // Calculate start and end date
-        LocalDate startDate = orderedDate;
+        //LocalDate startDate = startDate;
         LocalDate endDate = startDate.plusDays(durationInDays);
 
+        // Optionally log the duration for debugging (use a logger in production)
         System.out.println("Duration last date: " + durationInDays);
 
         // Create the new subscription plan
         CustomerSubscribedPlans customerSubscribedPlan = new CustomerSubscribedPlans(user, vendorSubscriptionPlan, startDate, endDate, orderedDate);
 
-        // Save the new subscription plan
+        // Save and return the new subscription plan
         return customerSubscribedPlansRepository.save(customerSubscribedPlan);
     }
-
 
     // Get Customer Subscription Plans by Vendor Subscription Plan ID
     @Transactional

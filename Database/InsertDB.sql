@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `tiffinwala` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `tiffinwala`;
--- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+CREATE DATABASE  IF NOT EXISTS `p10_tiffinwala` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `p10_tiffinwala`;
+-- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: localhost    Database: tiffinwala
+-- Host: localhost    Database: p10_tiffinwala
 -- ------------------------------------------------------
--- Server version	8.0.39
+-- Server version	8.2.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `customer_order_log`;
 CREATE TABLE `customer_order_log` (
   `Order_id` int NOT NULL AUTO_INCREMENT,
   `Uid` int NOT NULL,
-  `Order_date` date NOT NULL,
+  `order_date` datetime(6) NOT NULL,
   `quantity` int NOT NULL,
   PRIMARY KEY (`Order_id`),
   KEY `Uid` (`Uid`),
@@ -46,32 +46,15 @@ CREATE TABLE `customer_subscribed_plans` (
   `Customer_plan_id` int NOT NULL AUTO_INCREMENT,
   `Uid` int NOT NULL,
   `v_subscription_id` int NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `ordered_date` date DEFAULT NULL,
   PRIMARY KEY (`Customer_plan_id`),
   KEY `Uid` (`Uid`),
   KEY `v_subscription_id` (`v_subscription_id`),
   CONSTRAINT `customer_subscribed_plans_ibfk_1` FOREIGN KEY (`Uid`) REFERENCES `user` (`Uid`),
   CONSTRAINT `customer_subscribed_plans_ibfk_2` FOREIGN KEY (`v_subscription_id`) REFERENCES `vendor_subscription_plan` (`Plan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `customer_subscriptions_junction`
---
-
-DROP TABLE IF EXISTS `customer_subscriptions_junction`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `customer_subscriptions_junction` (
-  `Customer_plan_id` int NOT NULL,
-  `Uid` int NOT NULL,
-  `Plan_id` int NOT NULL,
-  PRIMARY KEY (`Customer_plan_id`,`Uid`,`Plan_id`),
-  KEY `Uid` (`Uid`),
-  KEY `Plan_id` (`Plan_id`),
-  CONSTRAINT `customer_subscriptions_junction_ibfk_1` FOREIGN KEY (`Customer_plan_id`) REFERENCES `customer_subscribed_plans` (`Customer_plan_id`),
-  CONSTRAINT `customer_subscriptions_junction_ibfk_2` FOREIGN KEY (`Uid`) REFERENCES `user` (`Uid`),
-  CONSTRAINT `customer_subscriptions_junction_ibfk_3` FOREIGN KEY (`Plan_id`) REFERENCES `vendor_subscription_plan` (`Plan_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -83,20 +66,17 @@ DROP TABLE IF EXISTS `feedback`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `feedback` (
   `feedback_id` int NOT NULL AUTO_INCREMENT,
-  `customer_plan_id` int NOT NULL,
-  `uid` int NOT NULL,
-  `v_subscription_id` int NOT NULL,
+  `uid` int DEFAULT NULL,
+  `vendor_id` int DEFAULT NULL,
   `feedback_text` varchar(500) NOT NULL,
-  `Rating` int DEFAULT NULL,
+  `rating` int DEFAULT NULL,
+  `feedback_date` date NOT NULL,
   PRIMARY KEY (`feedback_id`),
-  KEY `customer_plan_id` (`customer_plan_id`),
   KEY `uid` (`uid`),
-  KEY `v_subscription_id` (`v_subscription_id`),
-  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`customer_plan_id`) REFERENCES `customer_subscribed_plans` (`Customer_plan_id`),
-  CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `user` (`Uid`),
-  CONSTRAINT `feedback_ibfk_3` FOREIGN KEY (`v_subscription_id`) REFERENCES `vendor_subscription_plan` (`Plan_id`),
-  CONSTRAINT `feedback_chk_1` CHECK ((`Rating` between 1 and 5))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `vendor_id` (`vendor_id`),
+  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`Uid`),
+  CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`vendor_id`) REFERENCES `vendor` (`Vendor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,12 +128,10 @@ CREATE TABLE `tiffin` (
   `day` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `food_type` varchar(255) NOT NULL,
-  `image` varchar(255) DEFAULT NULL,
-  `price` int NOT NULL,
   PRIMARY KEY (`Tiffin_id`),
   KEY `V_Subscription_id` (`V_Subscription_id`),
   CONSTRAINT `tiffin_ibfk_1` FOREIGN KEY (`V_Subscription_id`) REFERENCES `vendor_subscription_plan` (`Plan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,13 +151,13 @@ CREATE TABLE `user` (
   `city` varchar(255) DEFAULT NULL,
   `pincode` varchar(255) DEFAULT NULL,
   `state` varchar(255) DEFAULT NULL,
-  `password` varchar(30) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `contact` varchar(20) NOT NULL,
   PRIMARY KEY (`Uid`),
   UNIQUE KEY `email` (`email`),
   KEY `role_id` (`Rid`),
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`Rid`) REFERENCES `role` (`Role_Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -198,7 +176,7 @@ CREATE TABLE `vendor` (
   PRIMARY KEY (`Vendor_id`),
   KEY `Uid` (`Uid`),
   CONSTRAINT `vendor_ibfk_1` FOREIGN KEY (`Uid`) REFERENCES `user` (`Uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,13 +192,13 @@ CREATE TABLE `vendor_subscription_plan` (
   `Name` varchar(255) NOT NULL,
   `Price` int NOT NULL,
   `Description` varchar(255) NOT NULL,
-  `Image` varchar(255) NOT NULL,
+  `Image` longblob,
   `is_available` tinyint(1) NOT NULL DEFAULT '1',
-  `Rating` int DEFAULT NULL,
+  `duration` enum('SEVEN_DAYS','THIRTY_DAYS') NOT NULL DEFAULT 'THIRTY_DAYS',
   PRIMARY KEY (`Plan_id`),
   KEY `Vendor_id` (`Vendor_id`),
   CONSTRAINT `vendor_subscription_plan_ibfk_1` FOREIGN KEY (`Vendor_id`) REFERENCES `vendor` (`Vendor_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -232,4 +210,4 @@ CREATE TABLE `vendor_subscription_plan` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-04  9:32:17
+-- Dump completed on 2025-02-12 17:11:57
