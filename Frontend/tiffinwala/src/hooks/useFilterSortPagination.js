@@ -15,7 +15,7 @@ const useFilterSortPagination = (data, plansPerPage = 10) => {
     if (selectedFilter === range) return; // Prevent redundant API calls
 
     setSelectedFilter(range);
-    let url = "http://localhost:8103/api/vendor-subscription-plans/filter/";
+    let url = "http://localhost:8104/api2/vsp/filter/";
 
     if (range === "0-1000") url += "0-1000";
     else if (range === "1000-5000") url += "1000-5000";

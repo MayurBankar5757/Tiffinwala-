@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function VendorSubPlanList() {
     const [subPlanList, setSubPlanList] = useState([]);
@@ -177,6 +178,9 @@ export default function VendorSubPlanList() {
                     ))}
                 </tbody>
             </table>
+            <Link to="/vendor_home" className="btn btn-secondary">
+                   Back to home
+            </Link>
         </div>
     );
 }

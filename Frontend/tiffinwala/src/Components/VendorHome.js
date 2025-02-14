@@ -147,7 +147,6 @@ export default function VendorHome() {
           )}
         </div>
       </div>
-
       <div className="container" style={{ marginBottom: "50px", textAlign: "center" }}>
         {renderNavigationCards()}
       </div>

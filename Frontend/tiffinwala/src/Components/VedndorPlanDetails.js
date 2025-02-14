@@ -8,7 +8,9 @@ export default function VendorPlanDetails() {
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState(null);
   const jwtToken = localStorage.getItem("jwtToken");
-
+  const [selectedStartDate, setSelectedStartDate] = useState(
+    new Date().toISOString().split('T')[0]
+);
   useEffect(() => {
     console.log("JWT Token:", jwtToken); // Verify token existence
     
@@ -79,6 +81,7 @@ export default function VendorPlanDetails() {
       const subscriptionData = {
         userId: userInfo.uid, // Use uid from Postman response
         subscriptionPlanId: id,
+        startDate: selectedStartDate 
       };
 
       const response = await fetch(
@@ -169,6 +172,19 @@ export default function VendorPlanDetails() {
                 >
                   Subscribe
                 </button>
+                <div className="text-center mt-3">
+                <label htmlFor="startDate" className="form-label">
+                    Subscription Start Date:
+                </label>
+                <input
+                    type="date"
+                    id="startDate"
+                    className="form-control mb-3"
+                    value={selectedStartDate}
+                    onChange={(e) => setSelectedStartDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                />
+               </div>
                 <Link
                   to="/customer_home"
                   className="btn btn-outline-secondary btn-lg px-5 py-3 ms-3"

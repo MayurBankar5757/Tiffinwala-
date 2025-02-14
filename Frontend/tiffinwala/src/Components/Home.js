@@ -109,9 +109,13 @@ export default function Home() {
             onClick={() => setCurrentPage(num + 1)}
           >
             {num + 1}
+
           </button>
+          
         ))}
+       
       </div>
+      <br/>
     </div>
   );
 }

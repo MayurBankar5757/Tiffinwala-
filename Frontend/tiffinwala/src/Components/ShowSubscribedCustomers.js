@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+
 
 export default function ShowSubscribedCustomers() {
     const { id } = useParams(); // Retrieve 'id' from URL params
@@ -58,6 +59,9 @@ export default function ShowSubscribedCustomers() {
                     </tbody>
                 </table>
             )}
+             <Link to="/vendor_home" className="btn btn-secondary">
+                   Back to home
+            </Link>
         </div>
     );
 }

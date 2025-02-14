@@ -74,32 +74,7 @@ export default function CustomerHome() {
   const currentItems = filteredPlans.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredPlans.length / plansPerPage);
 
-  const handleSubscribe = (subscriptionPlanId) => {
-    const jwtToken = localStorage.getItem("jwtToken");
-    if (!userInfo || !jwtToken) {
-      alert("Please log in to subscribe.");
-      navigate("/login");
-      return;
-    }
 
-    fetch("http://localhost:8104/api2/csp/subscribePlan", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-      body: JSON.stringify({ userId: userInfo.uid, subscriptionPlanId }),
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
-      })
-      .then(() => alert("Subscription successful!"))
-      .catch((error) => {
-        console.error("Error subscribing to plan:", error);
-        alert("Failed to subscribe. Please try again.");
-      });
-  };
 
   return (
     <div>
@@ -166,9 +141,7 @@ export default function CustomerHome() {
                     </span>
                     <Link to={`/VendorPlanDetails/${plan.planId}`} className="btn btn-primary btn-sm">Get Details</Link>
                   </div>
-                  <button className="btn btn-success btn-sm mt-2" onClick={() => handleSubscribe(plan.planId)} disabled={!plan.isAvailable}>
-                    Subscribe
-                  </button>
+
                 </div>
               </div>
             </div>

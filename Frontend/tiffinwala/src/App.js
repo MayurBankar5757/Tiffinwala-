@@ -24,6 +24,7 @@ import EnabledPlans from './Components/EnabledPlans';
 import DisabledPlans from './Components/DisabledPlans';
 import VendorMyPlanDetails from './Components/VedorPlanDetailsVendor';
 import GetAllVendors from './Components/GetAllVendors';
+import CustomerOrderHistory from './Components/CustomerProfile';
 
 function App() {
   const mystate = useSelector((state) => state.logged);
@@ -64,7 +65,7 @@ function App() {
 
 
           <Route path = '/admin/vendors/all' element = {<GetAllVendors/>}/>
-
+          <Route path='/ongoing_orders' element={<CustomerOrderHistory/>} />
 
 
         </Routes>
