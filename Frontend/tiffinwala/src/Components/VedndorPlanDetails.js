@@ -10,10 +10,10 @@ export default function VendorPlanDetails() {
   const jwtToken = localStorage.getItem("jwtToken");
   const [selectedStartDate, setSelectedStartDate] = useState(
     new Date().toISOString().split('T')[0]
-);
+  );
   useEffect(() => {
     console.log("JWT Token:", jwtToken); // Verify token existence
-    
+
     if (!jwtToken) {
       setError("Unauthorized access. Please log in.");
       return;
@@ -81,7 +81,7 @@ export default function VendorPlanDetails() {
       const subscriptionData = {
         userId: userInfo.uid, // Use uid from Postman response
         subscriptionPlanId: id,
-        startDate: selectedStartDate 
+        startDate: selectedStartDate
       };
 
       const response = await fetch(
@@ -127,7 +127,7 @@ export default function VendorPlanDetails() {
               <h2 className="text-center mb-4 display-4 font-weight-bold text-primary">
                 {plan.name}
               </h2>
-              
+
               {/* Fixed Image Rendering */}
               <div className="text-center mb-4">
                 {plan.image ? (
@@ -162,6 +162,20 @@ export default function VendorPlanDetails() {
                   {plan.isAvailable ? "Available" : "Not Available"}
                 </span>
               </div>
+              <div className="text-center mt-3">
+                <label htmlFor="startDate" className="form-label">
+                  Subscription Start Date:
+                </label>
+                <input
+                  type="date"
+                  id="startDate"
+                  className="form-control form-control-sm mx-auto"
+                  style={{ maxWidth: "250px" }} // Adjust the width as needed
+                  value={selectedStartDate}
+                  onChange={(e) => setSelectedStartDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                />
+              </div>
 
               {/* Subscription Button */}
               <div className="text-center mt-5">
@@ -172,19 +186,7 @@ export default function VendorPlanDetails() {
                 >
                   Subscribe
                 </button>
-                <div className="text-center mt-3">
-                <label htmlFor="startDate" className="form-label">
-                    Subscription Start Date:
-                </label>
-                <input
-                    type="date"
-                    id="startDate"
-                    className="form-control mb-3"
-                    value={selectedStartDate}
-                    onChange={(e) => setSelectedStartDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                />
-               </div>
+
                 <Link
                   to="/customer_home"
                   className="btn btn-outline-secondary btn-lg px-5 py-3 ms-3"
